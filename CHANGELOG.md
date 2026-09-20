@@ -10,6 +10,7 @@ Changes are grouped by release. Dates and versions are assigned when a release i
 - Independent writable catalog fields.
 - Durable login-unblock requests with background reconciliation and Redis deduplication.
 - MIT license, contributor/security policies, code ownership, and release documentation.
+- Verified desktop/mobile screenshots, a reproducible demo, and bounded local smoke measurements.
 
 ### Fixed
 
@@ -17,6 +18,8 @@ Changes are grouped by release. Dates and versions are assigned when a release i
 - Account-state verification and authentication changes execute under an account lock with transactional session revocation.
 - Login session creation rejects credentials that became stale during a concurrent password/status change.
 - Login-unblock recovery preserves newer rate-limit windows and login-block generations.
+- Clean builds retain all required outputs by storing incremental metadata inside the build directory.
+- Base migration identifier and dependency order during rollback.
 
 ### Changed
 

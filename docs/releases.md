@@ -14,6 +14,8 @@ Ahmad Sadieh owns release review. The configured Jenkins production-release-mana
 
 ## Deploy
 
+The consolidated base migration is verified on fresh databases, including rollback and reapplication. Existing installations using earlier migration names need an explicit migration-history reconciliation plan before adoption; do not rerun the base migration against an existing schema. The login-unblock migration adds its retry table and block-generation column before the updated API starts.
+
 Use the trusted main-branch Jenkins workflow described in [deployment.md](deployment.md). Publishing and deploying require explicit pipeline parameters. Review the exact rendered artifacts before approval. The migration job completes before application rollout; monitor probes, errors, locks, and dependency saturation afterward.
 
 ## Recover
