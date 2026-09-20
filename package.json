@@ -1,0 +1,21 @@
+{
+  "name": "enterprise-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=24.15.0 <27"
+  },
+  "scripts": {
+    "bootstrap": "node tools/tasks.mjs install",
+    "dev": "node tools/tasks.mjs dev",
+    "check": "node tools/tasks.mjs check",
+    "build": "node tools/tasks.mjs build",
+    "test": "node tools/tasks.mjs test",
+    "typecheck": "node tools/tasks.mjs typecheck",
+    "infra:up": "docker compose up -d --wait",
+    "infra:down": "docker compose down",
+    "integration": "node tools/integration.mjs",
+    "test:cluster": "node tools/redis-cluster-smoke.mjs"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,49 @@
+:host {
+  display: block;
+}
+.login {
+  min-block-size: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 88px 20px 40px;
+  background: var(--app-bg);
+}
+.login-actions {
+  position: absolute;
+  inset-block-start: 20px;
+  inset-inline-end: 20px;
+}
+.card {
+  width: min(100%, 400px);
+  padding: 40px 32px;
+  border: 1px solid var(--app-border);
+  background: var(--app-surface);
+  text-align: center;
+}
+.logo {
+  margin: 0 auto 24px;
+}
+h1 {
+  margin: 0 0 8px;
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+p {
+  margin: 0 0 32px;
+  color: var(--app-muted);
+  line-height: 1.6;
+}
+form {
+  display: grid;
+  gap: 4px;
+  text-align: start;
+}
+.submit {
+  min-height: 44px;
+}
+@media (max-width: 480px) {
+  .card {
+    padding: 32px 24px;
+  }
+}

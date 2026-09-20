@@ -1,0 +1,96 @@
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: otel-collector }
+data:
+  config.yaml: |
+    extensions:
+      health_check:
+        endpoint: 0.0.0.0:13133
+    receivers:
+      otlp:
+        protocols:
+          http:
+            endpoint: 0.0.0.0:4318
+    processors:
+      memory_limiter:
+        check_interval: 1s
+        limit_mib: 384
+        spike_limit_mib: 64
+      batch:
+        send_batch_size: 512
+        timeout: 5s
+    exporters:
+      otlphttp:
+        endpoint: ${env:OTEL_BACKEND_ENDPOINT}
+        headers:
+          Authorization: ${env:OTEL_BACKEND_AUTHORIZATION}
+        sending_queue:
+          queue_size: 2048
+        retry_on_failure:
+          enabled: true
+          max_elapsed_time: 300s
+    service:
+      extensions: [health_check]
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [memory_limiter, batch]
+          exporters: [otlphttp]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: otel-collector }
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: otel-collector } }
+  template:
+    metadata: { labels: { app: otel-collector } }
+    spec:
+      automountServiceAccountToken: false
+      securityContext: { runAsNonRoot: true, runAsUser: 10001, seccompProfile: { type: RuntimeDefault } }
+      containers:
+        - name: collector
+          image: otel/opentelemetry-collector-contrib:0.145.0
+          args: ["--config=/etc/otel/config.yaml"]
+          ports: [{ name: otlp, containerPort: 4318 }, { name: health, containerPort: 13133 }]
+          env:
+            - name: OTEL_BACKEND_ENDPOINT
+              valueFrom: { secretKeyRef: { name: enterprise-telemetry, key: endpoint } }
+            - name: OTEL_BACKEND_AUTHORIZATION
+              valueFrom: { secretKeyRef: { name: enterprise-telemetry, key: authorization } }
+          resources: { requests: { cpu: 100m, memory: 128Mi }, limits: { cpu: "1", memory: 512Mi } }
+          readinessProbe: { httpGet: { path: /, port: health } }
+          livenessProbe: { httpGet: { path: /, port: health } }
+          securityContext: { allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: { drop: [ALL] } }
+          volumeMounts: [{ name: config, mountPath: /etc/otel, readOnly: true }]
+      volumes: [{ name: config, configMap: { name: otel-collector } }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: otel-collector }
+spec:
+  selector: { app: otel-collector }
+  ports: [{ name: otlp, port: 4318, targetPort: otlp }]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: otel-collector }
+spec:
+  podSelector: { matchLabels: { app: otel-collector } }
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from: [{ podSelector: { matchLabels: { app: enterprise-api } } }]
+      ports: [{ protocol: TCP, port: 4318 }]
+  egress:
+    - to: [{ namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: kube-system } } }]
+      ports: [{ protocol: UDP, port: 53 }, { protocol: TCP, port: 53 }]
+    - to: [{ ipBlock: { cidr: 0.0.0.0/0 } }]
+      ports: [{ protocol: TCP, port: 443 }]
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata: { name: otel-collector }
+spec:
+  minAvailable: 1
+  selector: { matchLabels: { app: otel-collector } }
+

@@ -1,0 +1,14 @@
+**/node_modules/
+**/dist/
+**/.angular/
+**/coverage/
+**/test-results/
+**/playwright-report/
+**/.env
+**/.env.*
+!**/.env.example
+/apps/api/files/
+**/*.tsbuildinfo
+*.log
+.artifacts/
+.verification/

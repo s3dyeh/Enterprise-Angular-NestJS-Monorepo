@@ -1,0 +1,47 @@
+<div class="login">
+  <app-display-preferences class="login-actions" />
+  <mat-card class="card" appearance="outlined">
+    <app-logo class="logo" [size]="72" />
+    <h1>{{ 'app.name' | transloco }}</h1>
+    <p>{{ 'login.subtitle' | transloco }}</p>
+    @if (error()) {
+      <p role="alert">{{ error() }}</p>
+    }
+    <form [formGroup]="loginForm" (ngSubmit)="doLogin()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>{{ 'login.email' | transloco }}</mat-label>
+        <input matInput formControlName="email" type="email" autocomplete="username" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>{{ 'login.password' | transloco }}</mat-label>
+        <input
+          matInput
+          formControlName="password"
+          [type]="hide ? 'password' : 'text'"
+          autocomplete="current-password"
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="hide = !hide"
+          [attr.aria-label]="
+            hide ? ('login.showPassword' | transloco) : ('login.hidePassword' | transloco)
+          "
+        >
+          <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+      </mat-form-field>
+      <button
+        mat-flat-button
+        class="submit"
+        type="submit"
+        [disabled]="loginForm.invalid || submitting()"
+      >
+        {{ 'login.submit' | transloco }}
+      </button>
+    </form>
+    <a mat-button routerLink="/register">{{ 'login.createAccount' | transloco }}</a>
+    <a mat-button routerLink="/forgot-password">{{ 'login.forgotPassword' | transloco }}</a>
+  </mat-card>
+</div>

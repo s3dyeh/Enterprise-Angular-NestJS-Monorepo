@@ -1,0 +1,36 @@
+<div class="toolbar">
+  <div class="intro">
+    <h2>{{ 'cache.title' | transloco }}</h2>
+    <p>{{ 'cache.hint' | transloco }}</p>
+  </div>
+  <button mat-flat-button type="button" (click)="clear()" [disabled]="!selected()">
+    <mat-icon>cached</mat-icon>
+    {{ 'cache.submit' | transloco }}
+  </button>
+</div>
+
+<mat-card>
+  <app-list-state [loading]="loading()" [error]="error()" (retry)="loadKeys()" />
+  @if (!error()) {
+    <mat-action-list>
+      <div mat-subheader>{{ 'cache.key' | transloco }}</div>
+      @for (key of keys(); track key) {
+        <button
+          mat-list-item
+          type="button"
+          (click)="selected.set(key)"
+          [activated]="selected() === key"
+        >
+          <mat-icon matListItemIcon>inventory_2</mat-icon>
+          <span matListItemTitle>{{ key }}</span>
+          @if (selected() === key) {
+            <mat-icon matListItemMeta>check</mat-icon>
+          }
+        </button>
+      }
+      @if (!loading() && !keys().length) {
+        <div class="empty">{{ 'list.empty' | transloco }}</div>
+      }
+    </mat-action-list>
+  }
+</mat-card>

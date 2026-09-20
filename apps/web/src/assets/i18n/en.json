@@ -1,0 +1,201 @@
+{
+  "app": {
+    "name": "Enterprise"
+  },
+  "login": {
+    "subtitle": "Sign in to your workspace",
+    "username": "Username",
+    "password": "Password",
+    "submit": "Sign in",
+    "hidePassword": "Hide password",
+    "showPassword": "Show password",
+    "email": "Email",
+    "createAccount": "Create account",
+    "forgotPassword": "Forgot password?"
+  },
+  "nav": {
+    "menu": "Menu",
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "accounts": "Accounts",
+    "accounting": "Accounting",
+    "system": "Settings",
+    "activities": "Activities",
+    "cache": "Clear cache",
+    "users": "Users",
+    "customers": "Customers",
+    "loginBlocks": "Login blocks",
+    "currencies": "Currencies",
+    "accountCredits": "Account credits",
+    "toggleNav": "Toggle navigation",
+    "logout": "Logout",
+    "language": "Language"
+  },
+  "lang": {
+    "en": "English",
+    "ar": "العربية"
+  },
+  "settings": {
+    "roles": "Roles",
+    "regions": "Regions",
+    "cities": "Cities"
+  },
+  "list": {
+    "search": "Search",
+    "id": "ID",
+    "name": "Name",
+    "fullName": "Full name",
+    "username": "Username",
+    "email": "Email",
+    "phone": "Phone",
+    "type": "Type",
+    "status": "Status",
+    "resources": "Resources",
+    "region": "Region",
+    "property": "Property",
+    "value": "Value",
+    "description": "Description",
+    "event": "Event",
+    "ip": "IP",
+    "uri": "URI",
+    "createdAt": "Created",
+    "updatedAt": "Updated",
+    "attempts": "Attempts",
+    "stage": "Stage",
+    "locked": "Locked",
+    "lockedUntil": "Locked until",
+    "unblock": "Unblock",
+    "symbol": "Symbol",
+    "currency": "Currency",
+    "balance": "Balance",
+    "account": "Account",
+    "empty": "No records found",
+    "loadError": "Could not load records. Please try again.",
+    "retry": "Retry",
+    "edit": "Edit",
+    "delete": "Delete",
+    "addUser": "Add user",
+    "addCustomer": "Add customer",
+    "addRole": "Add role",
+    "addRegion": "Add region",
+    "addCity": "Add city",
+    "addCurrency": "Add currency"
+  },
+  "account": {
+    "passwordHint": "Leave empty to keep the current password",
+    "phoneHint": "Optional. 964 plus 10 digits",
+    "role": "Role",
+    "user": "User",
+    "customer": "Customer",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "user": {
+    "create": "Create user",
+    "edit": "Edit user"
+  },
+  "customer": {
+    "create": "Create customer",
+    "edit": "Edit customer"
+  },
+  "role": {
+    "create": "Create role",
+    "edit": "Edit role"
+  },
+  "region": {
+    "create": "Create region",
+    "edit": "Edit region"
+  },
+  "city": {
+    "create": "Create city",
+    "edit": "Edit city"
+  },
+  "setting": {
+    "edit": "Edit setting"
+  },
+  "currency": {
+    "create": "Create currency",
+    "edit": "Edit currency"
+  },
+  "cache": {
+    "title": "Clear cache",
+    "hint": "Choose a cache key, then clear it.",
+    "key": "Cache key",
+    "submit": "Clear"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "close": "Close",
+    "leave": "Leave",
+    "stay": "Stay",
+    "home": "Go to home",
+    "yes": "Yes",
+    "no": "No",
+    "actions": "Actions"
+  },
+  "dialog": {
+    "deleteTitle": "Delete",
+    "deleteBody": "Are you sure you want to delete this record?",
+    "unsavedTitle": "Unsaved changes",
+    "unsavedBody": "You have unsaved changes. Leave this form anyway?"
+  },
+  "validation": {
+    "required": "{{field}} is required",
+    "invalid": "{{field}} is not valid",
+    "minlength": "{{field}} minimum length is {{count}}",
+    "maxlength": "{{field}} maximum length is {{count}}"
+  },
+  "messages": {
+    "success": "Successful",
+    "saved": "Saved",
+    "loggedIn": "Logged in successfully",
+    "loggedOut": "You are successfully logged out",
+    "unexpected": "Something went wrong"
+  },
+  "errors": {
+    "generic": "Something went wrong",
+    "auth": "Authentication error",
+    "notFound": "Record not found",
+    "timeout": "Cannot communicate with server",
+    "sessionExpired": "Your session has expired. Please sign in again."
+  },
+  "error": {
+    "404Title": "Page not found",
+    "403Title": "You do not have access to this page",
+    "500Title": "Something went wrong"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Overview of your workspace",
+    "accounts": "Accounts",
+    "roles": "Roles",
+    "regions": "Regions",
+    "cities": "Cities",
+    "weekly": "Weekly activity",
+    "recent": "Recent activity",
+    "sampleHint": "Sample data for the boilerplate",
+    "activity1": "New account created",
+    "activity2": "Role permissions updated",
+    "activity3": "City added",
+    "activity4": "Region record edited",
+    "minutesAgo": "{{count}} min ago"
+  },
+  "paginator": {
+    "itemsPerPage": "Items per page",
+    "nextPage": "Next page",
+    "previousPage": "Previous page",
+    "firstPage": "First page",
+    "lastPage": "Last page",
+    "of": "of"
+  },
+  "theme": {
+    "light": "Switch to light mode",
+    "dark": "Switch to dark mode"
+  },
+  "pwa": {
+    "updateReady": "A new version is available",
+    "reload": "Reload"
+  }
+}

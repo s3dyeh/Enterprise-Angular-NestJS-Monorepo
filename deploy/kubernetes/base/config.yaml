@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: enterprise-config
+data:
+  NODE_ENV: production
+  APP_PORT: "3001"
+  API_PREFIX: api
+  APP_NAME: Enterprise
+  FRONTEND_DOMAIN: https://app.example.com
+  BACKEND_DOMAIN: https://app.example.com
+  APP_CORS_ORIGINS: https://app.example.com
+  DATABASE_TYPE: postgres
+  DATABASE_SYNCHRONIZE: "false"
+  DATABASE_MAX_CONNECTIONS: "10"
+  DATABASE_SSL_ENABLED: "true"
+  DATABASE_REJECT_UNAUTHORIZED: "true"
+  FILE_DRIVER: s3
+  AWS_S3_REGION: eu-west-1
+  AWS_DEFAULT_S3_BUCKET: enterprise-uploads
+  AUTH_JWT_TOKEN_EXPIRES_IN: 15m
+  AUTH_REFRESH_TOKEN_EXPIRES_IN: 30d
+  AUTH_FORGOT_TOKEN_EXPIRES_IN: 30m
+  AUTH_CONFIRM_EMAIL_TOKEN_EXPIRES_IN: 1d
+  AUTH_UNIFORM_ERRORS: "true"
+  RECAPTCHA_ENABLED: "true"
+  RECAPTCHA_ALLOWED_HOSTNAMES: app.example.com
+  RECAPTCHA_MIN_SCORE: "0.5"
+  REDIS_MODE: standalone
+  REDIS_TLS: "true"
+  REDIS_KEY_PREFIX: enterprise-production
+  AUTH_RATE_LIMIT: "20"
+  AUTH_RATE_WINDOW_SECONDS: "60"
+  SWAGGER_ENABLED: "false"
+  LOG_LEVEL: info
+  OTEL_ENABLED: "true"
+  OTEL_SERVICE_NAME: enterprise-api
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+  OTEL_TRACES_SAMPLER: parentbased_traceidratio
+  OTEL_TRACES_SAMPLER_ARG: "0.1"
+  MAIL_PORT: "587"
+  MAIL_IGNORE_TLS: "false"
+  MAIL_SECURE: "false"
+  MAIL_REQUIRE_TLS: "true"
+  MAIL_DEFAULT_EMAIL: noreply@example.com
+  MAIL_DEFAULT_NAME: Enterprise
+

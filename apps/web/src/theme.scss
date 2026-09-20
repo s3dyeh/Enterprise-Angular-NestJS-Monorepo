@@ -1,0 +1,55 @@
+@use '@angular/material' as mat;
+
+html {
+  color-scheme: light;
+  @include mat.theme(
+    (
+      color: mat.$green-palette,
+      typography: (
+        plain-family: 'Segoe UI, Noto Sans Arabic, sans-serif',
+        brand-family: 'Segoe UI, Noto Sans Arabic, sans-serif',
+      ),
+      density: 0,
+    )
+  );
+  @include mat.theme-overrides(
+    (
+      primary: light-dark(#303a34, #d2dfd4),
+      on-primary: light-dark(#ffffff, #18211b),
+      primary-container: light-dark(#e9efe8, #303d32),
+      on-primary-container: light-dark(#2d4434, #dcebdd),
+      surface: light-dark(#f7f7f4, #171a18),
+      surface-container-lowest: light-dark(#ffffff, #1b1f1c),
+      surface-container-low: light-dark(#f1f2ee, #202521),
+      on-surface: light-dark(#282d29, #e1e6e0),
+      on-surface-variant: light-dark(#606960, #b4beb4),
+      outline-variant: light-dark(#e0e4dd, #3b433c),
+    )
+  );
+  @include mat.card-overrides(
+    (
+      outlined-container-shape: 12px,
+      outlined-container-color: var(--mat-sys-surface-container-lowest),
+      elevated-container-shape: 12px,
+      elevated-container-elevation: none,
+    )
+  );
+  @include mat.button-overrides(
+    (
+      filled-container-shape: 6px,
+      outlined-container-shape: 6px,
+    )
+  );
+  --app-bg: var(--mat-sys-surface);
+  --app-surface: var(--mat-sys-surface-container-lowest);
+  --app-sidenav: var(--mat-sys-surface-container-low);
+  --app-text: var(--mat-sys-on-surface);
+  --app-muted: var(--mat-sys-on-surface-variant);
+  --app-border: var(--mat-sys-outline-variant);
+  --app-primary: var(--mat-sys-primary);
+  --app-primary-soft: var(--mat-sys-primary-container);
+}
+
+html.dark-theme {
+  color-scheme: dark;
+}

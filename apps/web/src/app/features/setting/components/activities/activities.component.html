@@ -1,0 +1,50 @@
+<app-list-toolbar [(search)]="list.search" (searchSubmitted)="list.applySearch()">
+</app-list-toolbar>
+
+<mat-card>
+  <app-list-state [loading]="list.loading()" [error]="list.error()" (retry)="list.load()" />
+  <div class="table-wrap wide">
+    <table mat-table [dataSource]="list.rows()" matSort (matSortChange)="list.sortChange($event)">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'list.id' | transloco }}</th>
+        <td mat-cell *matCellDef="let row">{{ row.id }}</td>
+      </ng-container>
+      <ng-container matColumnDef="created_at">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ 'list.createdAt' | transloco }}
+        </th>
+        <td mat-cell *matCellDef="let row">{{ row.created_at | date: 'short' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="event">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'list.event' | transloco }}</th>
+        <td mat-cell *matCellDef="let row">{{ row.event }}</td>
+      </ng-container>
+      <ng-container matColumnDef="username">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'list.username' | transloco }}</th>
+        <td mat-cell *matCellDef="let row">{{ row.username }}</td>
+      </ng-container>
+      <ng-container matColumnDef="uri">
+        <th mat-header-cell *matHeaderCellDef>{{ 'list.uri' | transloco }}</th>
+        <td mat-cell *matCellDef="let row">{{ row.uri }}</td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <tr class="mat-mdc-row" *matNoDataRow>
+        <td class="mat-mdc-cell" [attr.colspan]="displayedColumns.length">
+          @if (!list.loading() && !list.error()) {
+            {{ 'list.empty' | transloco }}
+          }
+        </td>
+      </tr>
+    </table>
+  </div>
+  <mat-paginator
+    showFirstLastButtons
+    [length]="list.count()"
+    [pageIndex]="list.params.page - 1"
+    [pageSize]="list.params.page_size"
+    [pageSizeOptions]="list.perPageOptions"
+    (page)="list.pageChange($event)"
+  >
+  </mat-paginator>
+</mat-card>

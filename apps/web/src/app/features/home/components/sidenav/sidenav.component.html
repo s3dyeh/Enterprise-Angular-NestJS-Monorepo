@@ -1,0 +1,67 @@
+<div class="shell" [class.is-mobile]="isMobile()">
+  <mat-toolbar class="topbar">
+    <button mat-icon-button (click)="snav.toggle()" [attr.aria-label]="'nav.toggleNav' | transloco">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <a routerLink="/" class="brand">
+      <app-logo [size]="34" />
+      <span>{{ 'app.name' | transloco }}</span>
+    </a>
+    <span class="spacer"></span>
+    <app-display-preferences />
+    <span class="user">
+      <span class="avatar">{{ initials }}</span>
+      <span class="user-name">{{ operatorName }}</span>
+    </span>
+    <button
+      mat-icon-button
+      type="button"
+      (click)="logout()"
+      [matTooltip]="'nav.logout' | transloco"
+      [attr.aria-label]="'nav.logout' | transloco"
+    >
+      <mat-icon>logout</mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <mat-sidenav-container class="layout">
+    <mat-sidenav
+      class="drawer"
+      [opened]="opened()"
+      (openedChange)="opened.set($event)"
+      #snav
+      [mode]="isMobile() ? 'over' : 'side'"
+      [fixedInViewport]="isMobile()"
+      [fixedTopGap]="64"
+    >
+      <p class="nav-label">{{ 'nav.menu' | transloco }}</p>
+      <nav class="nav">
+        <a routerLink="dashboard" routerLinkActive="active" (click)="closeIfMobile()">
+          <mat-icon>space_dashboard</mat-icon>
+          {{ 'nav.dashboard' | transloco }}
+        </a>
+        @if (canSettings) {
+          <a routerLink="settings" routerLinkActive="active" (click)="closeIfMobile()">
+            <mat-icon>settings</mat-icon>
+            {{ 'nav.settings' | transloco }}
+          </a>
+        }
+        @if (canAccounts) {
+          <a routerLink="accounts" routerLinkActive="active" (click)="closeIfMobile()">
+            <mat-icon>manage_accounts</mat-icon>
+            {{ 'nav.accounts' | transloco }}
+          </a>
+        }
+        @if (canAccounting) {
+          <a routerLink="accounting" routerLinkActive="active" (click)="closeIfMobile()">
+            <mat-icon>account_balance</mat-icon>
+            {{ 'nav.accounting' | transloco }}
+          </a>
+        }
+      </nav>
+    </mat-sidenav>
+    <mat-sidenav-content class="content">
+      <router-outlet />
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

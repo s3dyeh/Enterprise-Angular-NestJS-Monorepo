@@ -1,0 +1,22 @@
+{
+  "id": "/",
+  "name": "Monorepo Enterprise",
+  "short_name": "Monorepo",
+  "description": "Monorepo Enterprise is a web application that provides a platform for managing and organizing multiple projects within a single repository. It offers features such as project tracking, task management, and collaboration tools to streamline development workflows.",
+  "theme_color": "#046db5",
+  "background_color": "#fafafa",
+  "display": "standalone",
+  "orientation": "any",
+  "scope": "/",
+  "start_url": "/",
+  "lang": "en",
+  "dir": "auto",
+  "icons": [
+    {
+      "src": "brand.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

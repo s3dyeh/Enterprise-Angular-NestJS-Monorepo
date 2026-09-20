@@ -1,0 +1,38 @@
+<div class="dash">
+  <header class="hero">
+    <div>
+      <h1>{{ 'dashboard.title' | transloco }}</h1>
+      <p class="subtitle">{{ 'dashboard.subtitle' | transloco }}</p>
+    </div>
+    <app-logo [size]="56" />
+  </header>
+  @if (error()) {
+    <p role="alert">{{ 'list.loadError' | transloco }}</p>
+  }
+  @if (summary(); as data) {
+    <section class="stats">
+      @for (item of stats; track item.key) {
+        <mat-card class="stat" appearance="outlined"
+          ><mat-icon>{{ item.icon }}</mat-icon>
+          <div>
+            <p class="stat-label">{{ 'dashboard.' + item.key | transloco }}</p>
+            <p class="stat-value">{{ data[item.key] }}</p>
+          </div></mat-card
+        >
+      }
+    </section>
+    <mat-card class="panel" appearance="outlined"
+      ><h2>{{ 'dashboard.recent' | transloco }}</h2>
+      <ul class="activity">
+        @for (item of data.activity; track item.id) {
+          <li>
+            <span class="activity-text">{{ item.event }}</span
+            ><time>{{ item.created_at | date: 'short' }}</time>
+          </li>
+        } @empty {
+          <li>{{ 'list.empty' | transloco }}</li>
+        }
+      </ul>
+    </mat-card>
+  }
+</div>

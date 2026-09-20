@@ -1,0 +1,16 @@
+# Merge into the existing authenticated Prometheus deployment.
+# Mount METRICS_TOKEN from enterprise-secrets at /etc/prometheus/secrets/api-token.
+scrape_configs:
+  - job_name: enterprise-api
+    scrape_interval: 15s
+    metrics_path: /metrics
+    authorization:
+      type: Bearer
+      credentials_file: /etc/prometheus/secrets/api-token
+    dns_sd_configs:
+      - names: [api-metrics.enterprise-production.svc.cluster.local]
+        type: A
+        port: 3001
+rule_files:
+  - /etc/prometheus/rules/enterprise.yaml
+

@@ -1,0 +1,158 @@
+:host {
+  display: block;
+}
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  inset: 0;
+  background: var(--app-bg);
+}
+
+.is-mobile .topbar {
+  position: fixed;
+  z-index: 3;
+}
+
+.topbar {
+  height: calc(64px + env(safe-area-inset-top, 0px));
+  padding: env(safe-area-inset-top, 0px) 12px 0 8px;
+  background: var(--app-surface);
+  color: var(--app-text);
+  border-bottom: 1px solid var(--app-border);
+  box-shadow: none;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-inline-start: 4px;
+  color: inherit;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  min-width: 0;
+}
+
+.brand span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.user {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 4px 0 8px;
+}
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--app-primary-soft);
+  color: var(--app-primary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.layout {
+  flex: 1;
+  background: var(--app-bg);
+}
+
+.is-mobile .layout {
+  flex: 1 0 auto;
+  margin-top: calc(64px + env(safe-area-inset-top, 0px));
+}
+
+.drawer {
+  width: 248px;
+  background: var(--app-sidenav);
+  border-inline-end: 1px solid var(--app-border);
+}
+
+.nav-label {
+  margin: 20px 20px 8px;
+  color: var(--app-muted);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 12px;
+}
+
+.nav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  color: var(--app-text);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.nav a mat-icon {
+  color: var(--app-muted);
+}
+
+.nav a:hover {
+  background: var(--app-primary-soft);
+}
+
+.nav a.active {
+  background: var(--app-primary-soft);
+  color: var(--app-primary);
+}
+
+.nav a.active mat-icon {
+  color: var(--app-primary);
+}
+
+.content {
+  padding: 24px;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  min-width: 0;
+  background: var(--app-bg);
+}
+
+@media (max-width: 960px) {
+  .content {
+    padding: 16px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .user-name {
+    display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .brand span {
+    display: none;
+  }
+}

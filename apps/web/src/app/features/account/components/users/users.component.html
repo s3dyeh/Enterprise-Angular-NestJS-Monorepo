@@ -1,0 +1,84 @@
+<app-list-toolbar [(search)]="list.search" (searchSubmitted)="list.applySearch()">
+  <span *appPermission="'user:write'">
+    <button mat-flat-button (click)="list.openDialog()">
+      <mat-icon>add</mat-icon>
+      {{ 'list.addUser' | transloco }}
+    </button>
+  </span>
+</app-list-toolbar>
+
+<mat-card>
+  <app-list-state [loading]="list.loading()" [error]="list.error()" (retry)="list.load()" />
+  <div class="table-wrap wide">
+    <table mat-table [dataSource]="list.rows()" matSort (matSortChange)="list.sortChange($event)">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'list.id' | transloco }}</th>
+        <td mat-cell *matCellDef="let row">{{ row.id }}</td>
+      </ng-container>
+      <ng-container matColumnDef="full_name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'list.fullName' | transloco }}</th>
+        <td mat-cell *matCellDef="let row">{{ row.full_name }}</td>
+      </ng-container>
+      <ng-container matColumnDef="username">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'list.username' | transloco }}</th>
+        <td mat-cell *matCellDef="let row">{{ row.username }}</td>
+      </ng-container>
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'list.email' | transloco }}</th>
+        <td mat-cell *matCellDef="let row">{{ row.email }}</td>
+      </ng-container>
+      <ng-container matColumnDef="phone">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'list.phone' | transloco }}</th>
+        <td mat-cell *matCellDef="let row">{{ row.phone }}</td>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'list.status' | transloco }}</th>
+        <td mat-cell *matCellDef="let row">
+          {{ (row.status === 'in_active' ? 'account.inactive' : 'account.active') | transloco }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let row">
+          <span *appPermission="'user:write'">
+            <button
+              mat-icon-button
+              [matMenuTriggerFor]="menu"
+              [attr.aria-label]="'common.actions' | transloco"
+            >
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="list.openDialog(row)">
+                <mat-icon>edit</mat-icon>
+                {{ 'list.edit' | transloco }}
+              </button>
+              <button mat-menu-item (click)="list.remove(row)">
+                <mat-icon>delete</mat-icon>
+                {{ 'list.delete' | transloco }}
+              </button>
+            </mat-menu>
+          </span>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <tr class="mat-mdc-row" *matNoDataRow>
+        <td class="mat-mdc-cell" [attr.colspan]="displayedColumns.length">
+          @if (!list.loading() && !list.error()) {
+            {{ 'list.empty' | transloco }}
+          }
+        </td>
+      </tr>
+    </table>
+  </div>
+  <mat-paginator
+    showFirstLastButtons
+    [length]="list.count()"
+    [pageIndex]="list.params.page - 1"
+    [pageSize]="list.params.page_size"
+    [pageSizeOptions]="list.perPageOptions"
+    (page)="list.pageChange($event)"
+  >
+  </mat-paginator>
+</mat-card>

@@ -1,0 +1,38 @@
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', 'Noto Sans Arabic', sans-serif;
+  background: var(--app-bg, #fafafa);
+  color: var(--app-text, #1f2937);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

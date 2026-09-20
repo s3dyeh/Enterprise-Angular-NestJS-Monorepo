@@ -1,0 +1,19 @@
+groups:
+  - name: enterprise-api
+    rules:
+      - alert: EnterpriseApiUnavailable
+        expr: sum(up{job="enterprise-api"}) == 0 or absent(up{job="enterprise-api"})
+        for: 2m
+        labels: { severity: critical }
+        annotations: { summary: "No API replica can be scraped; inspect pods, readiness, Redis, and PostgreSQL." }
+      - alert: EnterpriseApiErrorRate
+        expr: sum(rate(http_request_duration_seconds_count{job="enterprise-api",status=~"5..",route!~"/health/.*|/metrics"}[5m])) / clamp_min(sum(rate(http_request_duration_seconds_count{job="enterprise-api",route!~"/health/.*|/metrics"}[5m])), 0.001) > 0.01
+        for: 5m
+        labels: { severity: critical }
+        annotations: { summary: "API error rate exceeds 1%; correlate trace IDs and recent releases." }
+      - alert: EnterpriseApiLatency
+        expr: histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{job="enterprise-api",route!~"/health/.*|/metrics"}[5m]))) > 0.5
+        for: 10m
+        labels: { severity: warning }
+        annotations: { summary: "API p95 latency exceeds 500ms; check database and CPU saturation." }
+

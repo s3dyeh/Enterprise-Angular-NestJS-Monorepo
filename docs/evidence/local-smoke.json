@@ -1,0 +1,39 @@
+{
+  "capturedAt": "2026-09-20T22:32:41.143Z",
+  "kind": "Local development smoke measurement; not production capacity or an SLA",
+  "runtime": {
+    "node": "v24.15.0",
+    "platform": "win32",
+    "arch": "x64",
+    "cpu": "Intel(R) Core(TM) Ultra 7 155H",
+    "logicalCpus": 22,
+    "memoryGiB": 15.3
+  },
+  "dependencies": "Local Docker Compose PostgreSQL and Redis; API and client share host; telemetry enabled",
+  "source": {
+    "state": "Local working tree",
+    "sha256": {
+      "apps/api/src/accounting/account-credits.service.ts": "ce9c710c1251866175119893711e591c6409feaaaadecace57c93535d205de5f",
+      "apps/api/src/admin/admin-query.ts": "882fb36b5d0982b40275197e3b1ebe576e594b4c388bcadcfff20d22e5649c1b",
+      "apps/api/package-lock.json": "5f3f87c8a0d405394b237b6c817a28acda55c84572170415deb6250ffcf772be"
+    }
+  },
+  "workload": {
+    "endpoint": "/api/v1/admin/account-credits?page=1&page_size=25",
+    "concurrency": 5,
+    "warmupRequests": 10,
+    "intendedDurationMs": 10000,
+    "elapsedMs": 10074,
+    "records": 1
+  },
+  "result": {
+    "requests": 743,
+    "errors": 0,
+    "requestsPerSecond": 73.76,
+    "latencyMs": {
+      "p50": 64.16,
+      "p95": 108.38,
+      "p99": 278.76
+    }
+  }
+}

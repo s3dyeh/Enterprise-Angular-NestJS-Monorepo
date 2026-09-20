@@ -1,0 +1,23 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+nav[mat-tab-nav-bar] {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+a[mat-tab-link] {
+  flex-shrink: 0;
+}
+
+a[mat-tab-link] mat-icon {
+  margin-inline-end: 8px;
+}
+
+@media (max-width: 600px) {
+  a[mat-tab-link] mat-icon {
+    margin-inline-end: 4px;
+  }
+}

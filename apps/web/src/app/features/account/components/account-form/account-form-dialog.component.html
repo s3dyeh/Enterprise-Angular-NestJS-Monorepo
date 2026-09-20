@@ -1,0 +1,86 @@
+<h2 mat-dialog-title>
+  {{
+    (isEdit ? (isUser ? 'user.edit' : 'customer.edit') : isUser ? 'user.create' : 'customer.create')
+      | transloco
+  }}
+</h2>
+<form [formGroup]="form" (ngSubmit)="save()">
+  <mat-dialog-content>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'list.fullName' | transloco }}</mat-label>
+      <input matInput formControlName="full_name" />
+      <mat-error>
+        <app-error-handling [formGroup]="form" field="full_name" message="list.fullName" />
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'list.username' | transloco }}</mat-label>
+      <input matInput formControlName="username" />
+      <mat-error>
+        <app-error-handling [formGroup]="form" field="username" message="list.username" />
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'login.password' | transloco }}</mat-label>
+      <input matInput formControlName="password" [type]="hide ? 'password' : 'text'" />
+      <button mat-icon-button matSuffix type="button" (click)="hide = !hide">
+        <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+      @if (isEdit) {
+        <mat-hint>{{ 'account.passwordHint' | transloco }}</mat-hint>
+      }
+      <mat-error>
+        <app-error-handling
+          [formGroup]="form"
+          field="password"
+          message="login.password"
+          [condition]="'10'"
+        />
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'list.email' | transloco }}</mat-label>
+      <input matInput formControlName="email" />
+      <mat-error>
+        <app-error-handling [formGroup]="form" field="email" message="list.email" />
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'list.phone' | transloco }}</mat-label>
+      <input matInput formControlName="phone" />
+      <mat-hint>{{ 'account.phoneHint' | transloco }}</mat-hint>
+      <mat-error>
+        <app-error-handling [formGroup]="form" field="phone" message="list.phone" />
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ 'list.status' | transloco }}</mat-label>
+      <mat-select formControlName="status">
+        @for (item of statuses; track item.id) {
+          <mat-option [value]="item.id">{{ item.name | transloco }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    @if (isUser) {
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>{{ 'account.role' | transloco }}</mat-label>
+        <mat-select formControlName="role_id">
+          @for (item of roles(); track item.id) {
+            <mat-option [value]="item.id">{{ item.name }}</mat-option>
+          }
+        </mat-select>
+        <mat-error>
+          <app-error-handling [formGroup]="form" field="role_id" message="account.role" />
+        </mat-error>
+      </mat-form-field>
+    }
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="dialog.discard()">
+      {{ 'common.cancel' | transloco }}
+    </button>
+    <button mat-flat-button type="submit" [disabled]="form.invalid || dialog.saving()">
+      {{ 'common.save' | transloco }}
+    </button>
+  </mat-dialog-actions>
+</form>

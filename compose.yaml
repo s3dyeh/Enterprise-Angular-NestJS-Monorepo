@@ -1,0 +1,32 @@
+name: enterprise-local
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: enterprise
+      POSTGRES_PASSWORD: local-development-only
+      POSTGRES_DB: enterprise
+    ports: ["127.0.0.1:${TEST_DATABASE_PORT:-55432}:5432"]
+    volumes: ["postgres-data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U enterprise -d enterprise"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "local-development-only"]
+    ports: ["127.0.0.1:${TEST_REDIS_PORT:-16379}:6379"]
+    volumes: ["redis-data:/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "REDISCLI_AUTH=local-development-only redis-cli ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  mail:
+    image: maildev/maildev:2.2.1
+    ports: ["127.0.0.1:${TEST_MAIL_PORT:-51025}:1025", "127.0.0.1:${TEST_MAIL_UI_PORT:-51080}:1080"]
+volumes:
+  postgres-data:
+  redis-data:
+

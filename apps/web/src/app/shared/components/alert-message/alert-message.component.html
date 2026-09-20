@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+<mat-dialog-content>
+  @if (data.message?.status === true) {
+    <mat-form-field class="full-width">
+      <textarea readonly matInput [rows]="data.message.rows">{{ data.message.content }}</textarea>
+    </mat-form-field>
+  }
+  @if (data.body) {
+    <p>{{ data.body }}</p>
+  }
+  @if (!data.body && data.deleteMessage === true) {
+    <p>{{ 'dialog.deleteBody' | transloco }}</p>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  @if (data.close.status === true) {
+    <button mat-button type="button" (click)="dialogRef.close(false)">
+      {{ data.close.title }}
+    </button>
+  }
+  @if (data.submit.status === true) {
+    <button mat-flat-button color="warn" type="button" (click)="dialogRef.close(true)">
+      {{ data.submit.title }}
+    </button>
+  }
+</mat-dialog-actions>

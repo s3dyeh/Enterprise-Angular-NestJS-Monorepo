@@ -1,0 +1,63 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-block-end: 20px;
+}
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  min-width: 640px;
+}
+.table-wrap.wide table {
+  min-width: 920px;
+}
+.mat-column-id {
+  width: 72px;
+}
+.mat-column-action {
+  width: 64px;
+  text-align: end;
+}
+th,
+td {
+  overflow-wrap: anywhere;
+}
+.mat-column-resources {
+  min-width: 220px;
+}
+form {
+  display: grid;
+  min-width: 0;
+  width: 100%;
+}
+.full-width {
+  width: 100%;
+}
+mat-card {
+  min-width: 0;
+  border: 1px solid var(--app-border);
+  overflow: hidden;
+}
+mat-selection-list {
+  max-height: min(280px, 40vh);
+  overflow: auto;
+}
+mat-paginator {
+  overflow-x: auto;
+}
+@media (max-width: 600px) {
+  .toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
