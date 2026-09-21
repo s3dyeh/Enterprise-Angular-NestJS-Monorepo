@@ -1,10 +1,10 @@
+import { PAGE_SIZE_DEFAULT, SEARCH_MAX_LENGTH } from '@enterprise/contracts';
 import { defaultListParams, dialogSize, likeOrFilter } from './crud.util';
-import { environment } from '@environments/environment';
 
 describe('defaultListParams', () => {
-  it('starts on page 1 with the first page size', () => {
+  it('starts on page 1 with the shared API default page size', () => {
     expect(defaultListParams()).toEqual({
-      page_size: environment.perPageOptions[0],
+      page_size: PAGE_SIZE_DEFAULT,
       page: 1,
       order_by: 'id',
       direction: 'desc',
@@ -28,6 +28,11 @@ describe('likeOrFilter', () => {
 
   it('preserves text without constructing a query language', () => {
     expect(likeOrFilter(['name'], 'a"b[c];d')).toBe('a"b[c];d');
+  });
+
+  it('bounds search length to the shared API maximum', () => {
+    const term = 'x'.repeat(SEARCH_MAX_LENGTH + 40);
+    expect(likeOrFilter(['name'], term).length).toBe(SEARCH_MAX_LENGTH);
   });
 });
 

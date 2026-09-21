@@ -1,0 +1,69 @@
+name: PR quality
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: pr-quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint, test, and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.15.0'
+          cache: npm
+          cache-dependency-path: |
+            libs/contracts/package-lock.json
+            apps/api/package-lock.json
+            apps/web/package-lock.json
+      - name: Bootstrap apps
+        run: npm run bootstrap
+      - name: Quality gates
+        run: npm run check
+
+  integration:
+    name: API integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: quality
+    if: >
+      contains(github.event.pull_request.labels.*.name, 'integration') ||
+      github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.15.0'
+          cache: npm
+          cache-dependency-path: |
+            libs/contracts/package-lock.json
+            apps/api/package-lock.json
+            apps/web/package-lock.json
+      - name: Bootstrap apps
+        run: npm run bootstrap
+      - name: Build API
+        run: npm run build
+        working-directory: apps/api
+      - name: Start dependencies
+        run: docker compose up -d --wait
+      - name: Integration suite
+        run: npm run integration
+      - name: Export OpenAPI
+        run: npm run openapi:export
+        working-directory: apps/api
+      - name: Upload OpenAPI artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi-integration
+          path: apps/api/openapi/openapi.json
+      - name: Stop dependencies
+        if: always()
+        run: docker compose down -v

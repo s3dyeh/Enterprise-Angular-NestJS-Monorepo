@@ -12,9 +12,9 @@ export const authGuard: CanActivateFn = (_, state) => {
   if (auth.isLoggedIn()) {
     return true;
   }
-  const intended = [state.url, router.currentNavigation()?.extractedUrl?.toString() ?? '']
-    .map((url) => url.split('?')[0])
-    .find((url) => isAppReturnUrl(url));
+  const intended = [state.url, router.currentNavigation()?.extractedUrl?.toString() ?? ''].find(
+    (url) => isAppReturnUrl(url),
+  );
   return auth.ensureSession().pipe(
     map(
       (loggedIn) =>

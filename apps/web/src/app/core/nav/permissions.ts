@@ -1,25 +1,13 @@
-export const APP_RESOURCES = [
-  'activity:read',
-  'setting:write',
-  'city:write',
-  'city:read',
-  'region:write',
-  'region:read',
-  'account:write',
-  'account:read',
-  'role:write',
-  'role:read',
-  'user:write',
-  'user:read',
-  'currency:write',
-  'currency:read',
-  'account-credit:write',
-  'account-credit:read',
-] as const;
+import { CORE_PERMISSIONS, type Permission } from '@enterprise/contracts';
 
-export type AppResource = (typeof APP_RESOURCES)[number];
+/** @deprecated Prefer Permission from @enterprise/contracts. */
+export type AppResource = Permission;
 
+/**
+ * Merge API-reported role resources with the shared permission catalog.
+ * Extra strings stay available for forward-compatible role definitions.
+ */
 export function mergeResources(api: string[] | null | undefined): string[] {
   const extra = (api ?? []).map((item) => item.trim()).filter(Boolean);
-  return [...new Set([...APP_RESOURCES, ...extra])];
+  return [...new Set([...CORE_PERMISSIONS, ...extra])];
 }

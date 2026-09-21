@@ -21,3 +21,34 @@
   font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
 }
+
+html[dir='rtl'] {
+  --direction-scale: -1;
+}
+html[dir='rtl'] body {
+  font-family: 'Noto Sans Arabic', 'Segoe UI', sans-serif;
+}
+html[dir='rtl'] h1,
+html[dir='rtl'] h2,
+html[dir='rtl'] h3 {
+  letter-spacing: normal;
+}
+button,
+a,
+input,
+select {
+  touch-action: manipulation;
+}
+:focus-visible {
+  outline: 2px solid var(--app-primary);
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

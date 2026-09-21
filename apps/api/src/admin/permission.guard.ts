@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { PermissionCode, type Permission } from '@enterprise/contracts';
 import type { Request } from 'express';
-import { Permission } from './permissions';
 
 export interface AdminRequest extends Request {
   user: {
@@ -26,7 +26,9 @@ export class PermissionGuard implements CanActivate {
     const current = { roleId: request.user.role?.id };
     if (
       current?.roleId !== 1 &&
-      ['role:write', 'user:write'].includes(permission)
+      (
+        [PermissionCode.RoleWrite, PermissionCode.UserWrite] as Permission[]
+      ).includes(permission)
     )
       return false;
     const resources = request.user.permissions ?? [];

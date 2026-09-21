@@ -19,7 +19,13 @@ import { roles as resource } from './catalog-resources';
 import { AdminStore } from './admin-store.service';
 import { AdminQueryDto } from './admin-query.dto';
 import { AdminRequest } from './permission.guard';
-import { PERMISSIONS, RequirePermission } from './permissions';
+import {
+  CORE_PERMISSIONS,
+  PERMISSIONS,
+  PermissionCode,
+  RequirePermission,
+} from './permissions';
+import { businessExamplesEnabled } from '../platform/business-examples.guard';
 
 export class AdminRoleDto {
   @IsString() @MinLength(1) @MaxLength(100) name: string;
@@ -30,13 +36,13 @@ export class AdminRolesController {
   constructor(private readonly store: AdminStore) {}
   @Get('roles')
   @ApiDataResponse(resource.response, { paged: true })
-  @RequirePermission('role:read')
+  @RequirePermission(PermissionCode.RoleRead)
   list(@Query() query: AdminQueryDto) {
     return this.store.list(resource, query);
   }
   @Get('all/roles')
   @ApiDataResponse(resource.response, { array: true })
-  @RequirePermission('user:write')
+  @RequirePermission(PermissionCode.UserWrite)
   lookup() {
     return this.store.lookup(resource);
   }
@@ -53,19 +59,19 @@ export class AdminRolesController {
       },
     },
   })
-  @RequirePermission('role:read')
+  @RequirePermission(PermissionCode.RoleRead)
   resources() {
-    return { data: PERMISSIONS };
+    return { data: businessExamplesEnabled() ? PERMISSIONS : CORE_PERMISSIONS };
   }
   @Post('roles')
   @ApiDataResponse(resource.response, { status: 201 })
-  @RequirePermission('role:write')
+  @RequirePermission(PermissionCode.RoleWrite)
   create(@Body() body: AdminRoleDto, @Req() request: AdminRequest) {
     return this.store.save(resource, this.validate(body), request.user.id);
   }
   @Put('roles/:id')
   @ApiDataResponse(resource.response)
-  @RequirePermission('role:write')
+  @RequirePermission(PermissionCode.RoleWrite)
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: AdminRoleDto,
@@ -76,7 +82,7 @@ export class AdminRolesController {
     return this.store.save(resource, this.validate(body), request.user.id, id);
   }
   @Delete('roles/:id')
-  @RequirePermission('role:write')
+  @RequirePermission(PermissionCode.RoleWrite)
   @HttpCode(204)
   remove(@Param('id', ParseIntPipe) id: number, @Req() request: AdminRequest) {
     if (id <= 2)

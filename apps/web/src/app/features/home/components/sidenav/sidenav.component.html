@@ -1,18 +1,22 @@
 <div class="shell" [class.is-mobile]="isMobile()">
+  <a class="skip-link" href="#main-content">{{ 'saas.nav.skip' | transloco }}</a>
   <mat-toolbar class="topbar">
-    <button mat-icon-button (click)="snav.toggle()" [attr.aria-label]="'nav.toggleNav' | transloco">
+    <button
+      mat-icon-button
+      (click)="snav.toggle()"
+      [attr.aria-label]="'nav.toggleNav' | transloco"
+      [attr.aria-expanded]="opened()"
+    >
       <mat-icon>menu</mat-icon>
     </button>
-    <a routerLink="/" class="brand">
-      <app-logo [size]="34" />
-      <span>{{ 'app.name' | transloco }}</span>
-    </a>
-    <span class="spacer"></span>
-    <app-display-preferences />
-    <span class="user">
-      <span class="avatar">{{ initials }}</span>
-      <span class="user-name">{{ operatorName }}</span>
-    </span>
+    <a routerLink="/start" class="brand"
+      ><app-logo [size]="30" /><span>{{ 'app.name' | transloco }}</span></a
+    >
+    <span class="spacer"></span><app-display-preferences />
+    <a routerLink="/profile" class="user" [attr.aria-label]="'saas.nav.profile' | transloco"
+      ><span class="avatar">{{ initials }}</span
+      ><span class="user-name">{{ operatorName }}</span></a
+    >
     <button
       mat-icon-button
       type="button"
@@ -23,7 +27,6 @@
       <mat-icon>logout</mat-icon>
     </button>
   </mat-toolbar>
-
   <mat-sidenav-container class="layout">
     <mat-sidenav
       class="drawer"
@@ -31,37 +34,58 @@
       (openedChange)="opened.set($event)"
       #snav
       [mode]="isMobile() ? 'over' : 'side'"
-      [fixedInViewport]="isMobile()"
-      [fixedTopGap]="64"
+      position="start"
+      [attr.aria-label]="'nav.menu' | transloco"
     >
-      <p class="nav-label">{{ 'nav.menu' | transloco }}</p>
-      <nav class="nav">
-        <a routerLink="dashboard" routerLinkActive="active" (click)="closeIfMobile()">
-          <mat-icon>space_dashboard</mat-icon>
-          {{ 'nav.dashboard' | transloco }}
-        </a>
-        @if (canSettings) {
-          <a routerLink="settings" routerLinkActive="active" (click)="closeIfMobile()">
-            <mat-icon>settings</mat-icon>
-            {{ 'nav.settings' | transloco }}
-          </a>
-        }
-        @if (canAccounts) {
-          <a routerLink="accounts" routerLinkActive="active" (click)="closeIfMobile()">
-            <mat-icon>manage_accounts</mat-icon>
-            {{ 'nav.accounts' | transloco }}
-          </a>
-        }
-        @if (canAccounting) {
-          <a routerLink="accounting" routerLinkActive="active" (click)="closeIfMobile()">
-            <mat-icon>account_balance</mat-icon>
-            {{ 'nav.accounting' | transloco }}
-          </a>
-        }
+      <div class="drawer-intro">
+        <span class="product-mark">{{ 'saas.nav.foundation' | transloco }}</span>
+        <p>{{ 'saas.nav.tagline' | transloco }}</p>
+      </div>
+      <nav class="nav" [attr.aria-label]="'saas.nav.workspace' | transloco">
+        <a
+          routerLink="/start"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+          (click)="closeIfMobile()"
+          ><mat-icon>home</mat-icon><span>{{ 'saas.nav.start' | transloco }}</span></a
+        >
+        <a
+          routerLink="/workspaces"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+          (click)="closeIfMobile()"
+          ><mat-icon>workspaces</mat-icon><span>{{ 'saas.nav.workspaces' | transloco }}</span></a
+        >
       </nav>
+      <p class="nav-label">{{ 'saas.nav.personal' | transloco }}</p>
+      <nav class="nav" [attr.aria-label]="'saas.nav.personal' | transloco">
+        <a
+          routerLink="/profile"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+          (click)="closeIfMobile()"
+          ><mat-icon>account_circle</mat-icon><span>{{ 'saas.nav.profile' | transloco }}</span></a
+        >
+      </nav>
+      @if (adminTabs.length) {
+        <p class="nav-label">{{ 'saas.nav.platform' | transloco }}</p>
+        <nav class="nav" [attr.aria-label]="'saas.nav.platform' | transloco">
+          @for (tab of adminTabs; track tab.path) {
+            <a
+              [routerLink]="['/admin', tab.path]"
+              routerLinkActive="active"
+              ariaCurrentWhenActive="page"
+              (click)="closeIfMobile()"
+              ><mat-icon>{{ tab.symbol }}</mat-icon
+              ><span>{{ tab.name | transloco }}</span></a
+            >
+          }
+        </nav>
+        <p class="scope-note">{{ 'saas.nav.platformNote' | transloco }}</p>
+      }
     </mat-sidenav>
-    <mat-sidenav-content class="content">
-      <router-outlet />
-    </mat-sidenav-content>
+    <mat-sidenav-content class="content"
+      ><main id="main-content" tabindex="-1"><router-outlet /></main
+    ></mat-sidenav-content>
   </mat-sidenav-container>
 </div>

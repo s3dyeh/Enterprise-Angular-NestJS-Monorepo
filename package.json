@@ -8,14 +8,20 @@
   "scripts": {
     "bootstrap": "node tools/tasks.mjs install",
     "dev": "node tools/tasks.mjs dev",
-    "check": "node tools/tasks.mjs check",
+    "check": "node tools/tasks.mjs check && node tools/permission-consistency.mjs",
     "build": "node tools/tasks.mjs build",
     "test": "node tools/tasks.mjs test",
     "typecheck": "node tools/tasks.mjs typecheck",
     "infra:up": "docker compose up -d --wait",
     "infra:down": "docker compose down",
     "integration": "node tools/integration.mjs",
-    "test:cluster": "node tools/redis-cluster-smoke.mjs"
+    "test:cluster": "node tools/redis-cluster-smoke.mjs",
+    "contracts:build": "npm --prefix libs/contracts run build",
+    "openapi:export": "npm --prefix apps/api run openapi:export",
+    "lint": "npm --prefix libs/contracts run lint && npm --prefix apps/api run lint && npm --prefix apps/web run lint"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "volta": {
+    "node": "24.15.0"
+  }
 }

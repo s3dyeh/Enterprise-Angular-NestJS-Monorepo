@@ -1,4 +1,5 @@
 import type { Routes } from '@angular/router';
+import { PermissionCode } from '@enterprise/contracts';
 import { firstTabGuard, permissionGuard } from '../../core/guard/auth.guard';
 import { unsavedFormGuard } from '../../core/guard/unsaved-form.guard';
 import { ACCOUNTING_TABS } from '../../core/nav/admin-nav';
@@ -21,14 +22,14 @@ export const accountingRoutes: Routes = [
         path: 'currencies',
         canActivate: [permissionGuard],
         canDeactivate: [unsavedFormGuard],
-        data: { permission: 'currency:read' },
+        data: { permission: PermissionCode.CurrencyRead },
         loadComponent: () =>
           import('./components/currencies/currencies.component').then((m) => m.CurrenciesComponent),
       },
       {
         path: 'account-credits',
         canActivate: [permissionGuard],
-        data: { permission: 'account-credit:read' },
+        data: { permission: PermissionCode.AccountCreditRead },
         loadComponent: () =>
           import('./components/account-credits/account-credits.component').then(
             (m) => m.AccountCreditsComponent,

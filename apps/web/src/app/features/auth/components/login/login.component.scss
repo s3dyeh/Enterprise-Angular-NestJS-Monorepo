@@ -14,11 +14,14 @@
   inset-inline-end: 20px;
 }
 .card {
-  width: min(100%, 400px);
+  width: min(100%, 440px);
   padding: 40px 32px;
   border: 1px solid var(--app-border);
   background: var(--app-surface);
   text-align: center;
+  border-radius: 20px;
+  border-block-start: 4px solid var(--app-primary);
+  box-shadow: 0 16px 48px light-dark(#172d500a, #00000020);
 }
 .logo {
   margin: 0 auto 24px;

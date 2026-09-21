@@ -1,14 +1,15 @@
+import { TranslocoService, TranslocoPipe } from '@jsverse/transloco';
 import { MatListModule } from '@angular/material/list';
 import type { OnInit } from '@angular/core';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TranslocoService } from '@jsverse/transloco';
+
 import { catchError, EMPTY } from 'rxjs';
 import { ApiEndpoints } from '@app/core/constants';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { TranslocoPipe } from '@jsverse/transloco';
+
 import { HttpService } from '@app/core/services/http.service';
 import { ListStateComponent } from '@app/shared/crud/list-state.component';
 

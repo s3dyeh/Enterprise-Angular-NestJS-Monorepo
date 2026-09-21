@@ -18,6 +18,8 @@ const dbName = "integration_" + randomBytes(6).toString("hex");
 const env = {
   ...process.env,
   NODE_ENV: "test",
+  // This compatibility suite deliberately exercises optional legacy domain APIs.
+  ENABLE_BUSINESS_EXAMPLES: "true",
   APP_PORT: port,
   API_PREFIX: "api",
   FRONTEND_DOMAIN: origin,

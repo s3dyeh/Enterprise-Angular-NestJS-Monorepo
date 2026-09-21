@@ -18,7 +18,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main.js",
-    "lint": "eslint \"src/**/*.ts\"",
+    "lint": "eslint \"src/**/*.ts\" --max-warnings 0",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -29,9 +29,12 @@
     "generate": "nest generate",
     "migration:run:prod": "node dist/database/run-migrations.js",
     "seed:prod": "node dist/database/seeds/run-seed.js",
-    "test:ci": "jest --runInBand --ci --coverage --reporters=default --reporters=jest-junit"
+    "openapi:export": "ts-node src/openapi/export-openapi.ts",
+    "test:ci": "jest --runInBand --ci --coverage --reporters=default --reporters=jest-junit",
+    "lint:fix": "eslint \"src/**/*.ts\" --max-warnings 0 --fix"
   },
   "dependencies": {
+    "@enterprise/contracts": "file:../../libs/contracts",
     "@aws-sdk/client-s3": "3.1011.0",
     "@aws-sdk/s3-request-presigner": "3.1011.0",
     "@nestjs/common": "11.2.5",

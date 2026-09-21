@@ -16,7 +16,7 @@ import { cities as resource } from '../admin/catalog-resources';
 import { AdminStore } from '../admin/admin-store.service';
 import { AdminQueryDto } from '../admin/admin-query.dto';
 import { AdminRequest } from '../admin/permission.guard';
-import { RequirePermission } from '../admin/permissions';
+import { RequirePermission, PermissionCode } from '../admin/permissions';
 import { CityDto } from './catalog.dto';
 
 @AdminController()
@@ -24,25 +24,25 @@ export class CitiesController {
   constructor(private readonly store: AdminStore) {}
   @Get('cities')
   @ApiDataResponse(resource.response, { paged: true })
-  @RequirePermission('city:read')
+  @RequirePermission(PermissionCode.CityRead)
   list(@Query() query: AdminQueryDto) {
     return this.store.list(resource, query);
   }
   @Get('all/cities')
   @ApiDataResponse(resource.response, { array: true })
-  @RequirePermission('city:read')
+  @RequirePermission(PermissionCode.CityRead)
   lookup() {
     return this.store.lookup(resource);
   }
   @Post('cities')
   @ApiDataResponse(resource.response, { status: 201 })
-  @RequirePermission('city:write')
+  @RequirePermission(PermissionCode.CityWrite)
   create(@Body() body: CityDto, @Req() request: AdminRequest) {
     return this.store.save(resource, body, request.user.id);
   }
   @Put('cities/:id')
   @ApiDataResponse(resource.response)
-  @RequirePermission('city:write')
+  @RequirePermission(PermissionCode.CityWrite)
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: CityDto,
@@ -51,7 +51,7 @@ export class CitiesController {
     return this.store.save(resource, body, request.user.id, id);
   }
   @Delete('cities/:id')
-  @RequirePermission('city:write')
+  @RequirePermission(PermissionCode.CityWrite)
   @HttpCode(204)
   remove(@Param('id', ParseIntPipe) id: number, @Req() request: AdminRequest) {
     return this.store.remove(resource, id, request.user.id);

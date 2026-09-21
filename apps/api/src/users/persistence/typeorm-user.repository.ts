@@ -10,6 +10,7 @@ import { UserRepository } from './user.repository';
 import { UserMapper } from './user.mapper';
 import { PaginationOptions } from '../../utils/types/pagination-options';
 import { revokeUserSessions } from '../../session/persistence/revoke-user-sessions';
+import { rethrowOwnerConflict } from '../../workspaces/owner-conflict';
 
 @Injectable()
 export class TypeOrmUserRepository implements UserRepository {
@@ -22,34 +23,36 @@ export class TypeOrmUserRepository implements UserRepository {
     id: User['id'],
     prepare: Parameters<UserRepository['updateAtomically']>[1],
   ): Promise<User> {
-    return this.usersRepository.manager.transaction(async (manager) => {
-      const repository = manager.getRepository(UserEntity);
-      // Lock the user before verifying state-bound links or changing credentials.
-      // Do not lock eager outer joins: PostgreSQL cannot lock nullable join sides.
-      const locked = await repository
-        .createQueryBuilder('user')
-        .select('user.id')
-        .where('user.id = :id', { id: Number(id) })
-        .setLock('pessimistic_write')
-        .getOne();
-      if (!locked) throw new NotFoundException('User not found');
-      const entity = await repository.findOneByOrFail({ id: locked.id });
-      const current = UserMapper.toDomain(entity);
-      const mutation = await prepare(current);
-      const updated = await repository.save(
-        repository.create(
-          UserMapper.toPersistence({ ...current, ...mutation.changes }),
-        ),
-      );
-      if (mutation.revokeSessions) {
-        await revokeUserSessions(
-          manager,
-          locked.id,
-          mutation.revokeSessions.excludeSessionId,
+    return this.usersRepository.manager
+      .transaction(async (manager) => {
+        const repository = manager.getRepository(UserEntity);
+        // Lock the user before verifying state-bound links or changing credentials.
+        // Do not lock eager outer joins: PostgreSQL cannot lock nullable join sides.
+        const locked = await repository
+          .createQueryBuilder('user')
+          .select('user.id')
+          .where('user.id = :id', { id: Number(id) })
+          .setLock('pessimistic_write')
+          .getOne();
+        if (!locked) throw new NotFoundException('User not found');
+        const entity = await repository.findOneByOrFail({ id: locked.id });
+        const current = UserMapper.toDomain(entity);
+        const mutation = await prepare(current);
+        const updated = await repository.save(
+          repository.create(
+            UserMapper.toPersistence({ ...current, ...mutation.changes }),
+          ),
         );
-      }
-      return UserMapper.toDomain(updated);
-    });
+        if (mutation.revokeSessions) {
+          await revokeUserSessions(
+            manager,
+            locked.id,
+            mutation.revokeSessions.excludeSessionId,
+          );
+        }
+        return UserMapper.toDomain(updated);
+      })
+      .catch(rethrowOwnerConflict);
   }
 
   async create(data: User): Promise<User> {
@@ -117,6 +120,6 @@ export class TypeOrmUserRepository implements UserRepository {
   }
 
   async remove(id: User['id']): Promise<void> {
-    await this.usersRepository.softDelete(id);
+    await this.usersRepository.softDelete(id).catch(rethrowOwnerConflict);
   }
 }

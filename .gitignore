@@ -12,3 +12,4 @@
 *.log
 .artifacts/
 .verification/
+apps/api/openapi/

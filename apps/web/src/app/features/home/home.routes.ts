@@ -1,11 +1,6 @@
 import type { Routes } from '@angular/router';
 import { authGuard, permissionGuard } from '../../core/guard/auth.guard';
-import { unsavedFormGuard } from '../../core/guard/unsaved-form.guard';
-import {
-  ACCOUNTING_PERMISSIONS,
-  ACCOUNT_PERMISSIONS,
-  SETTINGS_PERMISSIONS,
-} from '../../core/nav/admin-nav';
+import { ADMIN_TABS } from '../../core/nav/admin-nav';
 
 export const homeRoutes: Routes = [
   {
@@ -14,13 +9,47 @@ export const homeRoutes: Routes = [
       import('./components/sidenav/sidenav.component').then((m) => m.SidenavComponent),
     canActivateChild: [authGuard],
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: '', redirectTo: 'start', pathMatch: 'full' },
       {
-        path: 'dashboard',
-        canDeactivate: [unsavedFormGuard],
-        loadComponent: () =>
-          import('../dashboard/dashboard/dashboard.component').then((m) => m.DashboardComponent),
+        path: 'start',
+        loadComponent: () => import('../starter/start.component').then((m) => m.StartComponent),
       },
+      {
+        path: 'workspaces',
+        loadComponent: () =>
+          import('../workspaces/workspaces.component').then((m) => m.WorkspacesComponent),
+      },
+      {
+        path: 'workspaces/:id',
+        loadComponent: () =>
+          import('../workspaces/workspace-detail.component').then(
+            (m) => m.WorkspaceDetailComponent,
+          ),
+      },
+      {
+        path: 'join',
+        loadComponent: () =>
+          import('../workspaces/join-workspace.component').then((m) => m.JoinWorkspaceComponent),
+      },
+      {
+        path: 'profile',
+        loadComponent: () => import('../profile/profile.component').then((m) => m.ProfileComponent),
+      },
+      {
+        path: 'admin',
+        canActivate: [permissionGuard],
+        data: { permission: ADMIN_TABS.map((tab) => tab.permission) },
+        loadChildren: () => import('../platform/platform.routes').then((m) => m.platformRoutes),
+      },
+      { path: 'dashboard', redirectTo: 'start', pathMatch: 'full' },
+      { path: 'accounts/users', redirectTo: 'admin/users', pathMatch: 'full' },
+      { path: 'accounts/roles', redirectTo: 'admin/roles', pathMatch: 'full' },
+      { path: 'accounts/login-blocks', redirectTo: 'admin/security', pathMatch: 'full' },
+      { path: 'accounts', redirectTo: 'admin', pathMatch: 'full' },
+      { path: 'settings/system', redirectTo: 'admin/configuration', pathMatch: 'full' },
+      { path: 'settings/activities', redirectTo: 'admin/activity', pathMatch: 'full' },
+      { path: 'settings/cache', redirectTo: 'admin/maintenance', pathMatch: 'full' },
+      { path: 'settings', redirectTo: 'admin', pathMatch: 'full' },
       {
         path: '403',
         data: { statusCode: 403 },
@@ -28,26 +57,9 @@ export const homeRoutes: Routes = [
           import('../../core/pages/status-page.component').then((m) => m.StatusPageComponent),
       },
       {
-        path: 'settings',
-        canActivate: [permissionGuard],
-        canDeactivate: [unsavedFormGuard],
-        data: { permission: SETTINGS_PERMISSIONS },
-        loadChildren: () => import('../setting/setting.routes').then((m) => m.settingRoutes),
-      },
-      {
-        path: 'accounts',
-        canActivate: [permissionGuard],
-        canDeactivate: [unsavedFormGuard],
-        data: { permission: ACCOUNT_PERMISSIONS },
-        loadChildren: () => import('../account/account.routes').then((m) => m.accountRoutes),
-      },
-      {
-        path: 'accounting',
-        canActivate: [permissionGuard],
-        canDeactivate: [unsavedFormGuard],
-        data: { permission: ACCOUNTING_PERMISSIONS },
-        loadChildren: () =>
-          import('../accounting/accounting.routes').then((m) => m.accountingRoutes),
+        path: '**',
+        loadComponent: () =>
+          import('../../core/pages/status-page.component').then((m) => m.StatusPageComponent),
       },
     ],
   },

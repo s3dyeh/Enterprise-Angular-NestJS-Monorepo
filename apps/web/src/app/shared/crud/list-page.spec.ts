@@ -63,7 +63,7 @@ describe('ListPage', () => {
     expect(page.params.order_by).toBe('name');
     expect(page.params.direction).toBe('asc');
 
-    page.pageChange({ pageIndex: 2, pageSize: 25, length: 100 } as never);
+    page.pageChange({ pageIndex: 2, pageSize: 25, length: 100 });
     expect(page.params.page).toBe(3);
     expect(page.params.page_size).toBe(25);
   });

@@ -1,7 +1,7 @@
-export interface ListResponse<T> {
-  list: T[];
-  count: number;
-}
+import type { ListPage } from '@enterprise/contracts';
+
+/** @deprecated Prefer ListPage from @enterprise/contracts; kept as a local alias. */
+export type ListResponse<T> = ListPage<T>;
 
 export interface Session {
   id?: number;

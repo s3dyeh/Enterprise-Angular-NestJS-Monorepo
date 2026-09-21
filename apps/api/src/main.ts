@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory, Reflector } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { SwaggerModule } from '@nestjs/swagger';
 import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
 import validationOptions from './utils/validation-options';
@@ -16,6 +16,7 @@ import { ResolvePromisesInterceptor } from './utils/serializer.interceptor';
 import { Logger } from 'nestjs-pino';
 import { RuntimeConfig } from './platform/runtime.config';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { createOpenApiDocument } from './openapi/document';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -64,24 +65,8 @@ async function bootstrap() {
     new ClassSerializerInterceptor(app.get(Reflector)),
   );
 
-  const options = new DocumentBuilder()
-    .setTitle('API')
-    .setDescription('API docs')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .addGlobalParameters({
-      in: 'header',
-      required: false,
-      name: process.env.APP_HEADER_LANGUAGE || 'x-custom-lang',
-      schema: {
-        example: 'en',
-      },
-    })
-    .build();
-
   if (runtime.swaggerEnabled) {
-    const document = SwaggerModule.createDocument(app, options);
-    SwaggerModule.setup('docs', app, document);
+    SwaggerModule.setup('docs', app, createOpenApiDocument(app));
   }
 
   await app.listen(configService.getOrThrow('app.port', { infer: true }));

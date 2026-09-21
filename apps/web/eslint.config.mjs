@@ -4,7 +4,10 @@ import angular from 'angular-eslint';
 import prettier from 'eslint-config-prettier';
 
 export default tseslint.config(
-  { ignores: ['dist/**', '.angular/**', 'node_modules/**'] },
+  {
+    ignores: ['dist/**', '.angular/**', 'node_modules/**', 'coverage/**'],
+    linterOptions: { reportUnusedDisableDirectives: 'error', reportUnusedInlineConfigs: 'error' },
+  },
   {
     files: ['src/**/*.ts'],
     extends: [
@@ -13,7 +16,25 @@ export default tseslint.config(
       ...angular.configs.tsRecommended,
     ],
     processor: angular.processInlineTemplates,
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.app.json', './tsconfig.spec.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
     rules: {
+      '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/no-misused-promises': 'error',
+      '@typescript-eslint/await-thenable': 'error',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'error',
+      '@typescript-eslint/switch-exhaustiveness-check': 'error',
+      '@typescript-eslint/no-duplicate-type-constituents': 'error',
+      eqeqeq: ['error', 'always', { null: 'ignore' }],
+      curly: ['error', 'all'],
+      'no-var': 'error',
+      'prefer-const': 'error',
+      'no-debugger': 'error',
+      'no-duplicate-imports': ['error', { allowSeparateTypeImports: true }],
       'no-restricted-syntax': [
         'error',
         {
@@ -29,6 +50,13 @@ export default tseslint.config(
       ],
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@angular-eslint/prefer-inject': 'error',
+    },
+  },
+  {
+    files: ['e2e/**/*.ts'],
+    extends: [eslint.configs.recommended, ...tseslint.configs.recommendedTypeChecked],
+    languageOptions: {
+      parserOptions: { project: './tsconfig.e2e.json', tsconfigRootDir: import.meta.dirname },
     },
   },
   {

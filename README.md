@@ -1,12 +1,18 @@
-# Enterprise Angular & NestJS Monorepo
+# SaaS Foundation — Angular & NestJS
 
-**A full-stack TypeScript foundation for enterprise web applications, administration platforms, and internal business tools.**
+**Write your business code today. Deploy tomorrow.**
+
+Start with authentication, workspaces, invitations, and access control already connected. Spend your time building the features that make your product yours.
+
+The default app now includes workspaces, member invitations, profile/security, English/Arabic navigation, and a separate platform administration area. Accounting, customer ledgers, and geography are optional legacy examples, disabled by default. See the [SaaS starter guide](docs/saas-boilerplate.md) for current routes, authorization boundaries, extension instructions, and the honest feature matrix. Billing is an integration decision, not a simulated subscription screen.
 
 Build with **Angular 22**, **NestJS 11**, **PostgreSQL**, **TypeORM**, and **Redis** in one coordinated repository. Develop frontend and backend features together, deploy each application independently, and reuse established patterns for authentication, role-based access control, transactional business operations, testing, and observability.
 
 The project includes a working administration application, Docker images, Kubernetes deployment manifests, and a Jenkins delivery pipeline. Its modular architecture gives teams a practical starting point for extending business capabilities while keeping security rules and data consistency explicit.
 
 [Quick start](#quick-start) · [Architecture](#system-architecture) · [Capabilities](#enterprise-application-capabilities) · [Deployment](#docker-kubernetes-and-cicd) · [Documentation](#documentation)
+
+For contributing, see the [code quality rules](docs/code-quality.md). Run `npm run lint` for the zero-warning lint gate. Coding agents should start with [AGENTS.md](AGENTS.md), which links the repository's API, frontend, and verification skills under `.agents/skills`.
 
 ## Why this enterprise application foundation?
 
@@ -46,11 +52,15 @@ Suitable starting points include customer administration portals, operations das
 
 ## Application preview and evidence
 
-![Enterprise Angular and NestJS administration dashboard](docs/evidence/dashboard-desktop.png)
+The current SaaS start screen is shown below. See the [SaaS guide](docs/saas-boilerplate.md) for Arabic/mobile previews and extension instructions. Older administration evidence remains available for the optional domain examples.
+
+![SaaS Foundation start screen](docs/evidence/saas-start-en.png)
 
 Explore the [desktop/mobile screenshots, demo walkthrough, and measured local smoke workload](docs/demo-and-evidence.md). The evidence uses synthetic integration fixtures and includes reproduction steps and measurement limitations.
 
 ## Enterprise application capabilities
+
+The domain features in this legacy catalog require `ENABLE_BUSINESS_EXAMPLES=true`. They are not part of the default SaaS UI.
 
 | Area                       | Implemented capabilities                                                                                                           |
 | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
@@ -120,7 +130,7 @@ In local development, Angular's development server provides the API proxy. Compo
 
 ### Architectural boundaries
 
-- **One repository, two deployable applications.** Separate lockfiles accommodate different TypeScript and tooling requirements.
+- **One repository, two deployable applications.** Separate lockfiles accommodate different TypeScript and tooling requirements. Shared contracts live in `libs/contracts` without npm workspaces.
 - **Explicit feature ownership.** Identity, administration, geography, accounting, settings, files, and platform concerns have defined module boundaries.
 - **Shared infrastructure, domain-specific rules.** Query and transaction behavior is reused; account safeguards and credit invariants stay in dedicated services.
 - **Externalized shared state.** Database sessions, Redis, and production object storage support multiple API replicas.
@@ -311,6 +321,8 @@ enterprise-monorepo/
 │       │   └── shared/             # Components and CRUD helpers
 │       ├── nginx.conf
 │       └── Dockerfile
+├── libs/
+│   └── contracts/                  # Shared permissions, pagination, list types
 ├── deploy/
 │   ├── kubernetes/                 # Base, production overlay, collector
 │   └── observability/              # Prometheus, alerts, collector config

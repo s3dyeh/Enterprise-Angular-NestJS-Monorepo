@@ -12,11 +12,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { AuthService } from '@app/core/services/auth.service';
 import { LogoComponent } from '@app/shared/components/logo/logo.component';
-import {
-  ACCOUNTING_PERMISSIONS,
-  ACCOUNT_PERMISSIONS,
-  SETTINGS_PERMISSIONS,
-} from '@app/core/nav/admin-nav';
+import { ADMIN_TABS } from '@app/core/nav/admin-nav';
 
 const MOBILE_QUERY = '(max-width: 960px)';
 
@@ -48,11 +44,12 @@ export class SidenavComponent {
     { initialValue: false },
   );
   readonly opened = linkedSignal(() => !this.isMobile());
-  operatorName =
-    this.auth.getCurrentUser().fullName || this.auth.getCurrentUser().username || 'Admin';
-  readonly canSettings = this.auth.hasAccess(SETTINGS_PERMISSIONS);
-  readonly canAccounts = this.auth.hasAccess(ACCOUNT_PERMISSIONS);
-  readonly canAccounting = this.auth.hasAccess(ACCOUNTING_PERMISSIONS);
+  get operatorName(): string {
+    return this.auth.getCurrentUser().fullName || this.auth.getCurrentUser().email || '';
+  }
+  get adminTabs() {
+    return ADMIN_TABS.filter((tab) => this.auth.hasAccess(tab.permission));
+  }
   get initials(): string {
     return this.operatorName.trim().charAt(0).toUpperCase();
   }

@@ -41,7 +41,7 @@ export class MessageService {
       return this.transloco.translate(message).slice(0, 120);
     }
     if (message && typeof message === 'object' && 'message' in message) {
-      return String((message as { message: unknown }).message ?? '').slice(0, 120);
+      return String(message.message ?? '').slice(0, 120);
     }
     return '';
   }

@@ -7,13 +7,15 @@ import { PwaUpdateService } from './core/pwa/pwa-update.service';
 import { MessageService } from './core/services/message.service';
 import { ThemeService } from './core/services/theme.service';
 import { environment } from '@environments/environment';
+import { BidiModule } from '@angular/cdk/bidi';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, BidiModule],
   templateUrl: './app.html',
 })
 export class App {
+  readonly language = inject(LanguageService);
   constructor() {
     inject(ThemeService);
     inject(PwaUpdateService);

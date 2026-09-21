@@ -15,7 +15,12 @@ describe('AuthService', () => {
     updateAtomically: jest.fn(),
     findByEmail: jest.fn(),
   };
-  const sessions = { updateByHash: jest.fn(), deleteByUserId: jest.fn() };
+  const sessions = {
+    updateByHash: jest.fn(),
+    deleteByUserId: jest.fn(),
+    create: jest.fn(),
+    deleteById: jest.fn(),
+  };
   const mail = { forgotPassword: jest.fn() };
   const jwt = new JwtService();
   let service: AuthService;
@@ -23,6 +28,8 @@ describe('AuthService', () => {
     'auth.secret': 'test-access',
     'auth.refreshSecret': 'test-refresh',
     'auth.forgotSecret': 'test-forgot',
+    'auth.confirmEmailSecret': 'test-confirm',
+    'auth.confirmEmailExpires': '1d',
     'auth.expires': '15m',
     'auth.refreshExpires': '30d',
     'auth.uniformErrors': true,
@@ -160,5 +167,65 @@ describe('AuthService', () => {
       service.forgotPassword('missing@example.com'),
     ).resolves.toBeUndefined();
     expect(mail.forgotPassword).not.toHaveBeenCalled();
+  });
+
+  it('returns a uniform login error for unknown accounts', async () => {
+    users.findByEmail.mockResolvedValue(null);
+    await expect(
+      service.validateLogin({ email: 'missing@example.com', password: 'x' }),
+    ).rejects.toMatchObject({
+      response: {
+        errors: {
+          email: 'incorrectEmailOrPassword',
+          password: 'incorrectEmailOrPassword',
+        },
+      },
+    });
+    expect(sessions.create).not.toHaveBeenCalled();
+  });
+
+  it('logs out by deleting only the current session id', async () => {
+    sessions.deleteById.mockResolvedValue(undefined);
+    await service.logout({ sessionId: 44 });
+    expect(sessions.deleteById).toHaveBeenCalledWith(44);
+  });
+
+  it('rejects confirmation links that are not pending verification', async () => {
+    users.findById.mockResolvedValue({
+      id: 1,
+      email: 'user@example.com',
+      password: 'hash',
+      updatedAt: new Date('2024-01-01T00:00:00.000Z'),
+      status: { id: 1 },
+    });
+    users.updateAtomically.mockImplementation(
+      async (
+        id: number,
+        prepare: (
+          user: User,
+        ) => Promise<{ updates: object; revokeSessions?: object }>,
+      ) => {
+        const current = (await users.findById(id)) as User;
+        await prepare(current);
+        return current;
+      },
+    );
+    const token = jwt.sign(
+      { confirmEmailUserId: 1 },
+      {
+        secret:
+          'test-confirm' +
+          JSON.stringify([
+            1,
+            'user@example.com',
+            'hash',
+            new Date('2024-01-01T00:00:00.000Z'),
+          ]),
+        expiresIn: '1h',
+      },
+    );
+    await expect(service.confirmEmail(token)).rejects.toMatchObject({
+      message: 'Invalid confirmation link',
+    });
   });
 });

@@ -69,12 +69,8 @@ export class LoginComponent {
             safeReturnUrl(this.route.snapshot.queryParamMap.get('returnUrl')),
           );
         },
-        error: (error: unknown) => {
-          const response = error as { error?: { message?: string } };
-          this.error.set(
-            response.error?.message ||
-              'Sign-in failed. Check your credentials and confirm your email address.',
-          );
+        error: () => {
+          this.error.set('saas.auth.signInError');
         },
       });
   }

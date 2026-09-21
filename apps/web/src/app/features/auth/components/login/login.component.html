@@ -5,7 +5,7 @@
     <h1>{{ 'app.name' | transloco }}</h1>
     <p>{{ 'login.subtitle' | transloco }}</p>
     @if (error()) {
-      <p role="alert">{{ error() }}</p>
+      <p role="alert">{{ error() | transloco }}</p>
     }
     <form [formGroup]="loginForm" (ngSubmit)="doLogin()">
       <mat-form-field appearance="outline" class="full-width">
@@ -41,7 +41,7 @@
         {{ 'login.submit' | transloco }}
       </button>
     </form>
-    <a mat-button routerLink="/register">{{ 'login.createAccount' | transloco }}</a>
+    <a mat-button routerLink="/register" queryParamsHandling="preserve">{{ 'login.createAccount' | transloco }}</a>
     <a mat-button routerLink="/forgot-password">{{ 'login.forgotPassword' | transloco }}</a>
   </mat-card>
 </div>

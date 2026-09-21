@@ -8,7 +8,7 @@ import appConfig from './config/app.config';
 import mailConfig from './mail/config/mail.config';
 import fileConfig from './files/config/file.config';
 import path from 'node:path';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConditionalModule, ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HeaderResolver, I18nModule } from 'nestjs-i18n';
 import { TypeOrmConfigService } from './database/typeorm-config.service';
@@ -21,6 +21,8 @@ import { GeographyModule } from './geography/geography.module';
 import { AccountingModule } from './accounting/accounting.module';
 import { SettingsModule } from './settings/settings.module';
 import { ObservabilityModule } from './observability/observability.module';
+import { WorkspacesModule } from './workspaces/workspaces.module';
+import { businessExamplesEnabled } from './platform/business-examples.guard';
 
 @Module({
   imports: [
@@ -66,11 +68,12 @@ import { ObservabilityModule } from './observability/observability.module';
       inject: [ConfigService],
     }),
     UsersModule,
+    WorkspacesModule,
     PlatformModule,
     ObservabilityModule,
     AdminModule,
-    GeographyModule,
-    AccountingModule,
+    ConditionalModule.registerWhen(GeographyModule, businessExamplesEnabled),
+    ConditionalModule.registerWhen(AccountingModule, businessExamplesEnabled),
     SettingsModule,
     FilesModule,
     AuthModule,

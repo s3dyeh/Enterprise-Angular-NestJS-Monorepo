@@ -9,19 +9,21 @@
     "build:prod": "ng build --configuration production",
     "test": "ng test",
     "test:ci": "ng test --no-watch",
-    "lint": "ng lint",
+    "lint": "eslint \"src/**/*.{ts,html}\" \"e2e/**/*.ts\" --max-warnings 0",
     "format": "prettier --write \"src/**/*.{ts,html,scss,json}\"",
     "format:check": "prettier --check \"src/**/*.{ts,html,scss,json}\"",
-    "typecheck": "tsc --noEmit -p tsconfig.app.json",
-    "check": "npm run lint && npm run format:check && npm run test:ci && npm run build:prod",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.e2e.json",
+    "check": "npm run lint && npm run format:check && npm run typecheck && npm run test:ci && npm run build:prod",
     "e2e": "playwright test",
-    "e2e:ui": "playwright test --ui"
+    "e2e:ui": "playwright test --ui",
+    "lint:fix": "eslint \"src/**/*.{ts,html}\" \"e2e/**/*.ts\" --max-warnings 0 --fix"
   },
   "private": true,
   "overrides": {
     "uuid": "^11.1.1"
   },
   "dependencies": {
+    "@enterprise/contracts": "file:../../libs/contracts",
     "@angular/cdk": "^22.1.7",
     "@angular/common": "^22.1.7",
     "@angular/compiler": "^22.1.7",

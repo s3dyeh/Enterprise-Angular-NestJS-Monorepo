@@ -1,4 +1,4 @@
-const FALLBACK = '/dashboard';
+const FALLBACK = '/start';
 
 export function safeReturnUrl(url: string | null | undefined, fallback = FALLBACK): string {
   if (!url) {

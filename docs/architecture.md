@@ -1,8 +1,12 @@
 # Architecture and scaling
 
+The default product is now the [SaaS foundation](saas-boilerplate.md): workspace membership is separate from platform roles, and legacy business APIs are disabled by default. The older domain-specific patterns below remain reference implementations.
+
 ## Repository and deployment boundaries
 
 Keep the monorepo while the same team changes frontend and backend together. The web image and API image are separate deployable units. Their lockfiles and TypeScript versions remain isolated. Root tooling orchestrates existing commands without introducing an additional build framework.
+
+Shared constants and types live in `libs/contracts` (`@enterprise/contracts`) and are consumed through `file:` dependencies. The package stays free of NestJS and Angular so both apps can share permissions, pagination limits, and list envelope types without npm workspaces or a unified TypeScript version.
 
 The backend is a modular monolith. New business areas receive a module, validated DTOs, services, controller permissions, migrations, and integration coverage. Reuse the small allowlisted catalog store for simple reference tables; keep financial and identity invariants in explicit services. Avoid exposing arbitrary tables, SQL columns, or permission strings from a request.
 

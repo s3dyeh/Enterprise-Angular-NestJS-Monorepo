@@ -1,3 +1,7 @@
 # GitHub recognizes this email when it is verified on an account with repository write access.
-# Configure branch protection to require code-owner approval; this file alone does not enforce it.
+# Configure branch protection to require code-owner approval and the PR quality workflow; this file alone does not enforce them.
 * saadyehahmmad@gmail.com
+/apps/api/src/accounting/ saadyehahmmad@gmail.com
+/apps/api/src/auth/ saadyehahmmad@gmail.com
+/libs/contracts/ saadyehahmmad@gmail.com
+/.github/workflows/ saadyehahmmad@gmail.com

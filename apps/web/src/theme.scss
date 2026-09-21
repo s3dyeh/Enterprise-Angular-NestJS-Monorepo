@@ -4,7 +4,7 @@ html {
   color-scheme: light;
   @include mat.theme(
     (
-      color: mat.$green-palette,
+      color: mat.$azure-palette,
       typography: (
         plain-family: 'Segoe UI, Noto Sans Arabic, sans-serif',
         brand-family: 'Segoe UI, Noto Sans Arabic, sans-serif',
@@ -14,16 +14,16 @@ html {
   );
   @include mat.theme-overrides(
     (
-      primary: light-dark(#303a34, #d2dfd4),
-      on-primary: light-dark(#ffffff, #18211b),
-      primary-container: light-dark(#e9efe8, #303d32),
-      on-primary-container: light-dark(#2d4434, #dcebdd),
-      surface: light-dark(#f7f7f4, #171a18),
-      surface-container-lowest: light-dark(#ffffff, #1b1f1c),
-      surface-container-low: light-dark(#f1f2ee, #202521),
-      on-surface: light-dark(#282d29, #e1e6e0),
-      on-surface-variant: light-dark(#606960, #b4beb4),
-      outline-variant: light-dark(#e0e4dd, #3b433c),
+      primary: light-dark(#2563eb, #a9c7ff),
+      on-primary: light-dark(#ffffff, #102d60),
+      primary-container: light-dark(#eaf0ff, #243653),
+      on-primary-container: light-dark(#173d86, #d8e5ff),
+      surface: light-dark(#f8fafc, #121820),
+      surface-container-lowest: light-dark(#ffffff, #19212c),
+      surface-container-low: light-dark(#f1f5f9, #161f2b),
+      on-surface: light-dark(#1e293b, #e2e8f0),
+      on-surface-variant: light-dark(#475569, #b6c3d6),
+      outline-variant: light-dark(#dce3ed, #364558),
     )
   );
   @include mat.card-overrides(
@@ -36,8 +36,8 @@ html {
   );
   @include mat.button-overrides(
     (
-      filled-container-shape: 6px,
-      outlined-container-shape: 6px,
+      filled-container-shape: 10px,
+      outlined-container-shape: 10px,
     )
   );
   --app-bg: var(--mat-sys-surface);
@@ -48,6 +48,11 @@ html {
   --app-border: var(--mat-sys-outline-variant);
   --app-primary: var(--mat-sys-primary);
   --app-primary-soft: var(--mat-sys-primary-container);
+  --app-hero: #172d50;
+  --app-on-hero: #ffffff;
+  --app-hero-muted: #ccdafa;
+  --app-hero-line: #48638a;
+  --app-hero-tile: #243e63;
 }
 
 html.dark-theme {

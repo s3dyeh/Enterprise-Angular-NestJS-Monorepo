@@ -1,5 +1,5 @@
 import { HttpBackend, HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import type { Observable } from 'rxjs';
 import { catchError, finalize, map, of, shareReplay, switchMap, tap } from 'rxjs';
@@ -33,12 +33,14 @@ export class AuthService {
   private session: Session = {};
   private refresh$?: Observable<string>;
   private generation = 0;
+  private readonly sessionRevision = signal(0);
 
   constructor() {
     localStorage.removeItem(env.localStorageKey);
   }
 
   getCurrentUser(): SessionUser {
+    this.sessionRevision();
     const user = this.session;
     return {
       userId: user.id,
@@ -52,6 +54,9 @@ export class AuthService {
   }
   getToken(): string | undefined {
     return this.session.token;
+  }
+  updateCurrentUser(user: ApiUser): void {
+    this.applySession({ token: this.session.token ?? '', tokenExpires: 0, user });
   }
   isLoggedIn(): boolean {
     return !!this.session.token && !isTokenExpired(this.session.token);
@@ -119,6 +124,7 @@ export class AuthService {
     const returnUrl = this.router.url;
     this.generation++;
     this.session = {};
+    this.sessionRevision.update((value) => value + 1);
     this.refresh$ = undefined;
     if (notify)
       this.http
@@ -142,5 +148,6 @@ export class AuthService {
       role_id: user?.role?.id,
       resources: user?.role?.resources?.split(',').filter(Boolean) ?? [],
     };
+    this.sessionRevision.update((value) => value + 1);
   }
 }

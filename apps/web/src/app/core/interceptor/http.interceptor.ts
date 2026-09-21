@@ -10,6 +10,7 @@ import { MessageService } from '../services/message.service';
 import { ValidatorService } from '../services/validator.service';
 import { SpinnerOverlayService } from '../spinner/spinner-overlay.service';
 import { isTokenExpired } from '../util/jwt';
+import { LOCAL_FEEDBACK } from './local-feedback';
 
 const mutating = ['POST', 'PUT', 'PATCH', 'DELETE'];
 const retried = new HttpContextToken(() => false);
@@ -77,7 +78,13 @@ export const apiInterceptor: HttpInterceptorFn = (req, next) => {
     }
     return next(outgoing).pipe(
       tap((event) => {
-        if (event instanceof HttpResponse && event.status === 200 && showSpinner && !publicAuth) {
+        if (
+          event instanceof HttpResponse &&
+          event.status === 200 &&
+          showSpinner &&
+          !publicAuth &&
+          !req.context.get(LOCAL_FEEDBACK)
+        ) {
           messages.raise(200, 'messages.saved');
         }
       }),
@@ -93,6 +100,8 @@ export const apiInterceptor: HttpInterceptorFn = (req, next) => {
         if (error.status === 401) {
           messages.raise(error.status, payload);
           auth.logout(false);
+        } else if (req.context.get(LOCAL_FEEDBACK)) {
+          return throwError(() => error);
         } else if (error.status === 403) {
           messages.raise(error.status, payload);
         } else if (error?.error?.errors) {

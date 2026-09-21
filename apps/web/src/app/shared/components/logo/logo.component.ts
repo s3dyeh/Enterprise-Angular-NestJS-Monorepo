@@ -3,12 +3,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-logo',
-  template: `<img
-    src="brand.svg"
-    alt="Enterprise"
-    [style.width.px]="size()"
-    [style.height.px]="size()"
-  />`,
+  template: `<img src="brand.svg" alt="" [style.width.px]="size()" [style.height.px]="size()" />`,
   styles: [
     `
       :host {

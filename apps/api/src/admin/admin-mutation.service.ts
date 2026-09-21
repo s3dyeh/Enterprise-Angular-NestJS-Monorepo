@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { DataSource, EntityManager, QueryFailedError } from 'typeorm';
 import { ActivityEntity } from './persistence/activity.entity';
+import { rethrowOwnerConflict } from '../workspaces/owner-conflict';
 
 @Injectable()
 export class AdminMutationService {
@@ -34,7 +35,14 @@ export class AdminMutationService {
         throw new ConflictException(
           'The selected record does not exist or is still in use',
         );
-      if (code === '23514') throw new BadRequestException('Invalid value');
+      if (code === '23514') {
+        if (
+          (error.driverError as { constraint?: string }).constraint ===
+          'workspace_active_owner'
+        )
+          rethrowOwnerConflict(error);
+        throw new BadRequestException('Invalid value');
+      }
       if (code === '22003')
         throw new BadRequestException('The amount exceeds the supported range');
       throw error;

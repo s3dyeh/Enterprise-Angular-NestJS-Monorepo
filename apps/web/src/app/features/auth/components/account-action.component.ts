@@ -1,5 +1,7 @@
+import { TranslocoPipe } from '@jsverse/transloco';
+import { DisplayPreferencesComponent } from '@app/shared/components/display-preferences/display-preferences.component';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -15,6 +17,8 @@ import { RecaptchaService } from '@app/core/services/recaptcha.service';
   selector: 'app-account-action',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TranslocoPipe,
+    DisplayPreferencesComponent,
     ReactiveFormsModule,
     RouterLink,
     MatButtonModule,
@@ -28,58 +32,76 @@ import { RecaptchaService } from '@app/core/services/recaptcha.service';
       place-items: center;
       min-height: 100dvh;
       padding: 24px;
+      background: var(--app-bg);
     }
     mat-card {
       width: min(100%, 440px);
       padding: 28px;
+      border-radius: 20px;
+      border-block-start: 4px solid var(--app-primary);
+      background: var(--app-surface);
     }
     form {
       display: grid;
       gap: 12px;
     }
     h1 {
-      margin-top: 0;
+      margin-block: 20px;
+      font-size: 28px;
+      line-height: 1.3;
+      letter-spacing: -0.025em;
     }
   `,
   template: ` <mat-card appearance="outlined"
-    ><h1>{{ title }}</h1>
+    ><app-display-preferences />
+    <h1>{{ title | transloco }}</h1>
     @if (message()) {
-      <p role="status">{{ message() }}</p>
+      <p role="status">{{ message() | transloco }}</p>
     }
     @if (error()) {
-      <p role="alert">{{ error() }}</p>
+      <p role="alert">{{ error() | transloco }}</p>
     }
     @if (!complete()) {
       <form [formGroup]="form" (ngSubmit)="submit()">
         @if (mode === 'register') {
           <mat-form-field
-            ><mat-label>First name</mat-label
+            ><mat-label>{{ 'saas.auth.firstName' | transloco }}</mat-label
             ><input matInput formControlName="firstName" autocomplete="given-name"
           /></mat-form-field>
           <mat-form-field
-            ><mat-label>Last name</mat-label
+            ><mat-label>{{ 'saas.auth.lastName' | transloco }}</mat-label
             ><input matInput formControlName="lastName" autocomplete="family-name"
           /></mat-form-field>
         }
         @if (mode === 'register' || mode === 'forgot' || mode === 'resend') {
           <mat-form-field
-            ><mat-label>Email</mat-label
-            ><input matInput type="email" formControlName="email" autocomplete="email"
-          /></mat-form-field>
+            ><mat-label>{{ 'login.email' | transloco }}</mat-label
+            ><input matInput type="email" formControlName="email" autocomplete="email" />
+            @if (form.controls.email.hasError('emailAlreadyExists')) {
+              <mat-error>{{ 'saas.auth.duplicateEmail' | transloco }}</mat-error>
+            }
+          </mat-form-field>
         }
         @if (mode === 'register' || mode === 'reset') {
           <mat-form-field
-            ><mat-label>Password (12–72 characters)</mat-label
-            ><input matInput type="password" formControlName="password" autocomplete="new-password"
-          /></mat-form-field>
+            ><mat-label>{{ 'login.password' | transloco }}</mat-label
+            ><input
+              matInput
+              type="password"
+              formControlName="password"
+              autocomplete="new-password"
+            /><mat-hint>{{ 'saas.auth.passwordHint' | transloco }}</mat-hint></mat-form-field
+          >
         }
         <button mat-flat-button type="submit" [disabled]="form.invalid || busy()">
-          {{ title }}
+          {{ title | transloco }}
         </button>
       </form>
     }
-    <a mat-button routerLink="/resend-confirmation">Resend confirmation email</a
-    ><a mat-button routerLink="/login">Back to sign in</a>
+    <a mat-button routerLink="/resend-confirmation">{{ 'saas.auth.resendLink' | transloco }}</a
+    ><a mat-button routerLink="/login" queryParamsHandling="preserve">{{
+      'saas.auth.back' | transloco
+    }}</a>
   </mat-card>`,
 })
 export class AccountActionComponent {
@@ -90,12 +112,12 @@ export class AccountActionComponent {
   readonly mode = this.route.snapshot.data['mode'] as
     'register' | 'resend' | 'forgot' | 'reset' | 'confirm' | 'confirm-new';
   readonly title = {
-    register: 'Create account',
-    resend: 'Resend confirmation',
-    forgot: 'Request password reset',
-    reset: 'Set new password',
-    confirm: 'Confirm email address',
-    'confirm-new': 'Confirm new email address',
+    register: 'saas.auth.register',
+    resend: 'saas.auth.resend',
+    forgot: 'saas.auth.forgot',
+    reset: 'saas.auth.reset',
+    confirm: 'saas.auth.confirm',
+    'confirm-new': 'saas.auth.confirmNew',
   }[this.mode];
   readonly busy = signal(false);
   readonly complete = signal(false);
@@ -138,7 +160,7 @@ export class AccountActionComponent {
       if (this.mode === 'forgot') {
         return of({ path: 'forgot/password', body: { email: values.email } });
       }
-      if (!hash) throw new Error('This link is incomplete. Request a new email.');
+      if (!hash) throw new Error('saas.auth.invalidLink');
       const path =
         this.mode === 'reset'
           ? 'reset/password'
@@ -160,16 +182,27 @@ export class AccountActionComponent {
           this.complete.set(true);
           this.message.set(
             ['register', 'forgot', 'resend'].includes(this.mode)
-              ? 'Check your inbox for the next step. If an account exists, you will receive an email.'
-              : 'Your account has been updated. You can now sign in.',
+              ? 'saas.auth.inbox'
+              : 'saas.auth.updated',
           );
         },
-        error: (error: unknown) =>
+        error: (error: unknown) => {
+          if (
+            error instanceof HttpErrorResponse &&
+            error.status === 422 &&
+            error.error?.errors?.email === 'emailAlreadyExists'
+          ) {
+            const email = this.form.controls.email;
+            email.setErrors({ ...email.errors, emailAlreadyExists: true });
+            email.markAsTouched();
+            return;
+          }
           this.error.set(
-            error instanceof Error
+            error instanceof Error && !(error instanceof HttpErrorResponse)
               ? error.message
-              : 'Unable to complete the request. Please try again.',
-          ),
+              : 'saas.auth.generic',
+          );
+        },
       });
   }
 }

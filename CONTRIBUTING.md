@@ -12,7 +12,7 @@
 
 Use validated DTOs, explicit response schemas, and resource-specific read/write allowlists. Use the transaction's entity manager for every dependent write. State-bound tokens must be verified after locking the current account. New catalog response fields must not implicitly grant write access.
 
-Use shared helpers for pagination, password policy, and session revocation. Keep specialized financial/security invariants visible in feature services. Never commit secrets, actual uploads, personal screenshots, or production data fixtures.
+Use shared helpers for pagination, password policy, and session revocation. Keep specialized financial/security invariants visible in feature services. Never commit secrets, actual uploads, personal screenshots, or production data fixtures. Shared permissions and pagination limits live in `libs/contracts`; update that package instead of duplicating string literals in either app. After API contract changes, run `npm run openapi:export` with local Compose/database available and review the generated schema.
 
 ## Checks before review
 

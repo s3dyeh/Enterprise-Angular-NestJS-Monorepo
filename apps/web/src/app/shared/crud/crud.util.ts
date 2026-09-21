@@ -1,20 +1,26 @@
+import { PAGE_SIZE_DEFAULT, SEARCH_MAX_LENGTH } from '@enterprise/contracts';
+import type { ListParams } from '@app/core/interfaces/params';
 import type { MatDialog } from '@angular/material/dialog';
 import type { TranslocoService } from '@jsverse/transloco';
-import type { ListParams } from '@app/core/interfaces/params';
 import { AlertMessageComponent } from '@app/shared/components/alert-message/alert-message.component';
-import { environment } from '@environments/environment';
 
+/**
+ * Default administrative list query params aligned with API AdminQueryDto defaults.
+ */
 export function defaultListParams(): ListParams {
   return {
-    page_size: environment.perPageOptions[0],
+    page_size: PAGE_SIZE_DEFAULT,
     page: 1,
     order_by: 'id',
     direction: 'desc',
   };
 }
 
+/**
+ * Trim and bound a free-text search term for the API `search` query parameter.
+ */
 export function likeOrFilter(_columns: string[], term: string): string {
-  return term.trim().slice(0, 200);
+  return term.trim().slice(0, SEARCH_MAX_LENGTH);
 }
 
 export function dialogSize(width = '480px') {
