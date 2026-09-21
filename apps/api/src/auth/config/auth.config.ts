@@ -41,6 +41,10 @@ function checkPlaceholderSecrets(): void {
 }
 
 class EnvironmentVariablesValidator {
+  @IsBooleanString()
+  @IsOptional()
+  AUTH_EMAIL_VERIFICATION_REQUIRED: string;
+
   @IsString()
   @IsNotEmpty()
   AUTH_JWT_SECRET: string;
@@ -114,5 +118,7 @@ export default registerAs<AuthConfig>('auth', () => {
     confirmEmailExpires: process.env
       .AUTH_CONFIRM_EMAIL_TOKEN_EXPIRES_IN as ms.StringValue,
     uniformErrors: process.env.AUTH_UNIFORM_ERRORS === 'true',
+    emailVerificationRequired:
+      process.env.AUTH_EMAIL_VERIFICATION_REQUIRED !== 'false',
   };
 });

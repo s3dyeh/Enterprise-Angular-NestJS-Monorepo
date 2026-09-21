@@ -40,7 +40,12 @@ export class BrowserAuthController {
   @Get('config')
   configuration(@Res({ passthrough: true }) response: Response) {
     response.setHeader('Cache-Control', 'no-store');
-    return { recaptcha: this.captcha.publicConfig() };
+    return {
+      recaptcha: this.captcha.publicConfig(),
+      emailVerificationRequired: this.config.getOrThrow<boolean>(
+        'auth.emailVerificationRequired',
+      ),
+    };
   }
 
   @Post('login')

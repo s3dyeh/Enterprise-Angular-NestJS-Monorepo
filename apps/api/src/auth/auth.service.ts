@@ -98,6 +98,10 @@ export class AuthService {
   }
 
   async register(dto: AuthRegisterLoginDto): Promise<void> {
+    const verificationRequired =
+      this.configService.getOrThrow('auth.emailVerificationRequired', {
+        infer: true,
+      }) !== false;
     const user = await this.usersService.create({
       ...dto,
       email: dto.email,
@@ -105,9 +109,13 @@ export class AuthService {
         id: RoleId.user,
       },
       status: {
-        id: StatusId.pendingVerification,
+        id: verificationRequired
+          ? StatusId.pendingVerification
+          : StatusId.active,
       },
     });
+
+    if (!verificationRequired) return;
 
     const hash = await this.jwtService.signAsync(
       {

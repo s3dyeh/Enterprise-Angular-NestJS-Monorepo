@@ -1,3 +1,4 @@
+import { authError } from '../../auth-error';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -69,8 +70,8 @@ export class LoginComponent {
             safeReturnUrl(this.route.snapshot.queryParamMap.get('returnUrl')),
           );
         },
-        error: () => {
-          this.error.set('saas.auth.signInError');
+        error: (error: unknown) => {
+          this.error.set(authError(error, 'saas.auth.signInError'));
         },
       });
   }

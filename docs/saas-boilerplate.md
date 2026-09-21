@@ -87,3 +87,7 @@ The older integration suite explicitly enables business examples so their preser
 ![Arabic desktop navigation](evidence/saas-start-ar.png)
 
 ![Arabic mobile navigation](evidence/saas-mobile-ar.png)
+
+## Email verification policy
+
+`AUTH_EMAIL_VERIFICATION_REQUIRED=true` (the default) creates pending registrations and sends a confirmation email. Set it to `false` in the API environment to create active accounts without sending confirmation email; restart the API after changing it. The frontend reads the public authentication configuration and tells users they can sign in immediately. This applies to new registrations only: existing pending or inactive accounts retain their status. Password recovery and email-address changes still require email delivery.

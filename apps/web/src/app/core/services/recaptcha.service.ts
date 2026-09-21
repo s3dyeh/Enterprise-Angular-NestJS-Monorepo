@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { Observable, defer, of, shareReplay, switchMap, timeout } from 'rxjs';
 import { environment } from '@environments/environment';
 
@@ -9,11 +9,13 @@ interface Recaptcha {
   execute(key: string, options: { action: string }): Promise<string>;
 }
 interface PublicConfig {
+  emailVerificationRequired?: boolean;
   recaptcha: { enabled: boolean; siteKey: string | null };
 }
 
 @Injectable({ providedIn: 'root' })
 export class RecaptchaService {
+  readonly emailVerificationRequired = signal(true);
   private readonly http = inject(HttpClient);
   private readonly document = inject(DOCUMENT);
   private script?: Observable<Recaptcha>;
@@ -21,7 +23,8 @@ export class RecaptchaService {
   token(action: 'login' | 'register'): Observable<string | undefined> {
     // Fetch current server policy; disabling the client cannot bypass server verification.
     return this.http.get<PublicConfig>(`${environment.apiUrl}/auth/browser/config`).pipe(
-      switchMap(({ recaptcha }) => {
+      switchMap(({ recaptcha, emailVerificationRequired }) => {
+        this.emailVerificationRequired.set(emailVerificationRequired !== false);
         if (!recaptcha.enabled) return of(undefined);
         const siteKey = recaptcha.siteKey;
         if (!siteKey) throw new Error('Verification is not configured');

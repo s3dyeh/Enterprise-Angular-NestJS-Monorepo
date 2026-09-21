@@ -10,6 +10,7 @@ import { MailService } from '../mail/mail.service';
 
 describe('AuthService', () => {
   const users = {
+    create: jest.fn(),
     findById: jest.fn(),
     update: jest.fn(),
     updateAtomically: jest.fn(),
@@ -21,7 +22,7 @@ describe('AuthService', () => {
     create: jest.fn(),
     deleteById: jest.fn(),
   };
-  const mail = { forgotPassword: jest.fn() };
+  const mail = { forgotPassword: jest.fn(), userSignUp: jest.fn() };
   const jwt = new JwtService();
   let service: AuthService;
   const config: Record<string, unknown> = {
@@ -36,6 +37,7 @@ describe('AuthService', () => {
   };
 
   beforeEach(async () => {
+    config['auth.emailVerificationRequired'] = true;
     jest.resetAllMocks();
     users.update.mockImplementation((id: number, changes: object) =>
       Promise.resolve({ id, ...changes }),
@@ -69,6 +71,24 @@ describe('AuthService', () => {
     }).compile();
     service = module.get(AuthService);
   });
+
+  it.each([true, false])(
+    'registers with email verification required=%s',
+    async (required) => {
+      config['auth.emailVerificationRequired'] = required;
+      users.create.mockResolvedValue({ id: 101, email: 'new@example.test' });
+      await service.register({
+        email: 'new@example.test',
+        password: 'valid-password-123',
+        firstName: 'Test',
+        lastName: 'User',
+      });
+      expect(users.create).toHaveBeenCalledWith(
+        expect.objectContaining({ status: { id: required ? 3 : 1 } }),
+      );
+      expect(mail.userSignUp).toHaveBeenCalledTimes(required ? 1 : 0);
+    },
+  );
 
   it('treats links to missing accounts as invalid links', async () => {
     users.updateAtomically.mockRejectedValue(new NotFoundException());

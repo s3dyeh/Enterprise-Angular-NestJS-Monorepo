@@ -50,3 +50,12 @@ form {
     padding: 32px 24px;
   }
 }
+
+[role='alert'] {
+  padding: 16px;
+  border-inline-start: 4px solid var(--mat-sys-error);
+  border-radius: 8px;
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+  text-align: start;
+}

@@ -305,7 +305,7 @@
     "auth": {
       "firstName": "First name",
       "lastName": "Last name",
-      "passwordHint": "Use 12–72 characters, at most 72 UTF-8 bytes.",
+      "passwordHint": "Use 12 to 72 characters, at most 72 UTF-8 bytes.",
       "register": "Create account",
       "resend": "Resend confirmation",
       "forgot": "Request password reset",
@@ -319,7 +319,16 @@
       "duplicateEmail": "This email address is already registered. Sign in or use another email.",
       "back": "Back to sign in",
       "resendLink": "Resend confirmation email",
-      "signInError": "Sign-in failed. Check your credentials and confirm your email address."
+      "signInError": "Sign-in failed. Check your credentials and confirm your email address.",
+      "nameRequired": "Enter a name of 1–80 characters.",
+      "emailInvalid": "Enter a valid email address.",
+      "passwordRequired": "Enter your password (up to 72 characters).",
+      "submitting": "Please wait…",
+      "mailUnavailable": "We couldn’t send the email. Please try again shortly. If you were creating an account, use “Resend confirmation email” to finish setup.",
+      "offline": "Unable to reach the server. Check your connection and try again.",
+      "rateLimited": "Too many attempts. Please wait a moment before trying again.",
+      "verificationUnavailable": "Verification could not be completed. Please try again.",
+      "readyToSignIn": "Your account is ready. You can sign in now."
     },
     "errors": {
       "generic": "Unable to complete this request. Please try again.",

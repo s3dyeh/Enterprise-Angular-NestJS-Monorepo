@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import fs from 'node:fs/promises';
 import { ConfigService } from '@nestjs/config';
 import nodemailer, { Transporter, SendMailOptions } from 'nodemailer';
@@ -41,16 +41,23 @@ export class MailTransportService {
       })(context);
     }
 
-    await this.transporter.sendMail({
-      ...mailOptions,
-      from: mailOptions.from
-        ? mailOptions.from
-        : `"${this.configService.get('mail.defaultName', {
-            infer: true,
-          })}" <${this.configService.get('mail.defaultEmail', {
-            infer: true,
-          })}>`,
-      html: mailOptions.html ? mailOptions.html : html,
-    });
+    try {
+      await this.transporter.sendMail({
+        ...mailOptions,
+        from: mailOptions.from
+          ? mailOptions.from
+          : `"${this.configService.get('mail.defaultName', {
+              infer: true,
+            })}" <${this.configService.get('mail.defaultEmail', {
+              infer: true,
+            })}>`,
+        html: mailOptions.html ? mailOptions.html : html,
+      });
+    } catch (cause) {
+      throw new ServiceUnavailableException(
+        { status: 503, errors: { mail: 'mailDeliveryUnavailable' } },
+        { cause },
+      );
+    }
   }
 }

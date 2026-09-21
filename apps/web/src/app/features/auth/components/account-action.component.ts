@@ -1,3 +1,4 @@
+import { authError } from '../auth-error';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { DisplayPreferencesComponent } from '@app/shared/components/display-preferences/display-preferences.component';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
@@ -41,6 +42,14 @@ import { RecaptchaService } from '@app/core/services/recaptcha.service';
       border-block-start: 4px solid var(--app-primary);
       background: var(--app-surface);
     }
+    [role='alert'] {
+      padding: 16px;
+      border-inline-start: 4px solid var(--mat-sys-error);
+      border-radius: 8px;
+      background: var(--mat-sys-error-container);
+      color: var(--mat-sys-on-error-container);
+      line-height: 1.6;
+    }
     form {
       display: grid;
       gap: 12px;
@@ -66,12 +75,16 @@ import { RecaptchaService } from '@app/core/services/recaptcha.service';
         @if (mode === 'register') {
           <mat-form-field
             ><mat-label>{{ 'saas.auth.firstName' | transloco }}</mat-label
-            ><input matInput formControlName="firstName" autocomplete="given-name"
-          /></mat-form-field>
+            ><input matInput formControlName="firstName" autocomplete="given-name" /><mat-error>{{
+              'saas.auth.nameRequired' | transloco
+            }}</mat-error></mat-form-field
+          >
           <mat-form-field
             ><mat-label>{{ 'saas.auth.lastName' | transloco }}</mat-label
-            ><input matInput formControlName="lastName" autocomplete="family-name"
-          /></mat-form-field>
+            ><input matInput formControlName="lastName" autocomplete="family-name" /><mat-error>{{
+              'saas.auth.nameRequired' | transloco
+            }}</mat-error></mat-form-field
+          >
         }
         @if (mode === 'register' || mode === 'forgot' || mode === 'resend') {
           <mat-form-field
@@ -79,6 +92,8 @@ import { RecaptchaService } from '@app/core/services/recaptcha.service';
             ><input matInput type="email" formControlName="email" autocomplete="email" />
             @if (form.controls.email.hasError('emailAlreadyExists')) {
               <mat-error>{{ 'saas.auth.duplicateEmail' | transloco }}</mat-error>
+            } @else {
+              <mat-error>{{ 'saas.auth.emailInvalid' | transloco }}</mat-error>
             }
           </mat-form-field>
         }
@@ -90,11 +105,12 @@ import { RecaptchaService } from '@app/core/services/recaptcha.service';
               type="password"
               formControlName="password"
               autocomplete="new-password"
-            /><mat-hint>{{ 'saas.auth.passwordHint' | transloco }}</mat-hint></mat-form-field
+            /><mat-hint>{{ 'saas.auth.passwordHint' | transloco }}</mat-hint
+            ><mat-error>{{ 'saas.auth.passwordHint' | transloco }}</mat-error></mat-form-field
           >
         }
         <button mat-flat-button type="submit" [disabled]="form.invalid || busy()">
-          {{ title | transloco }}
+          {{ (busy() ? 'saas.auth.submitting' : title) | transloco }}
         </button>
       </form>
     }
@@ -181,9 +197,11 @@ export class AccountActionComponent {
         next: () => {
           this.complete.set(true);
           this.message.set(
-            ['register', 'forgot', 'resend'].includes(this.mode)
-              ? 'saas.auth.inbox'
-              : 'saas.auth.updated',
+            this.mode === 'register' && !this.captcha.emailVerificationRequired()
+              ? 'saas.auth.readyToSignIn'
+              : ['register', 'forgot', 'resend'].includes(this.mode)
+                ? 'saas.auth.inbox'
+                : 'saas.auth.updated',
           );
         },
         error: (error: unknown) => {
@@ -198,9 +216,9 @@ export class AccountActionComponent {
             return;
           }
           this.error.set(
-            error instanceof Error && !(error instanceof HttpErrorResponse)
-              ? error.message
-              : 'saas.auth.generic',
+            error instanceof Error && error.message === 'saas.auth.invalidLink'
+              ? 'saas.auth.invalidLink'
+              : authError(error),
           );
         },
       });

@@ -40,12 +40,45 @@ describe('AccountActionComponent', () => {
             snapshot: { data: { mode: 'register' }, queryParamMap: convertToParamMap({}) },
           },
         },
-        { provide: RecaptchaService, useValue: { token: () => of(undefined) } },
+        {
+          provide: RecaptchaService,
+          useValue: { token: () => of(undefined), emailVerificationRequired: () => true },
+        },
       ],
     });
   });
 
   afterEach(() => TestBed.inject(HttpTestingController).verify());
+
+  it('explains invalid required fields instead of only disabling submission', () => {
+    const fixture = TestBed.createComponent(AccountActionComponent);
+    fixture.componentInstance.form.markAllAsTouched();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelectorAll('mat-error').length).toBe(4);
+  });
+
+  it('keeps email delivery failures visible and allows retry', () => {
+    const fixture = TestBed.createComponent(AccountActionComponent);
+    const component = fixture.componentInstance;
+    component.form.setValue({
+      firstName: 'Test',
+      lastName: 'User',
+      email: 'new@example.test',
+      password: 'example-password-123',
+    });
+    component.submit();
+    TestBed.inject(HttpTestingController)
+      .expectOne(`${environment.apiUrl}/auth/email/register`)
+      .flush(
+        { errors: { mail: 'mailDeliveryUnavailable' } },
+        { status: 503, statusText: 'Service Unavailable' },
+      );
+    fixture.detectChanges();
+    expect(component.error()).toBe('saas.auth.mailUnavailable');
+    expect(fixture.nativeElement.querySelector('[role="alert"]')?.textContent).toBeTruthy();
+    expect(component.busy()).toBeFalse();
+    expect(component.complete()).toBeFalse();
+  });
 
   it('shows duplicate email feedback and allows a corrected email to be submitted', () => {
     const fixture = TestBed.createComponent(AccountActionComponent);
