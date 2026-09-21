@@ -28,7 +28,7 @@
     "@typescript-eslint/parser": "8.57.1",
     "eslint": "10.0.3",
     "eslint-config-prettier": "10.1.8",
-    "typescript": "5.9.3"
+    "typescript": "7.0.2"
   },
   "engines": {
     "node": ">=24.15.0"
