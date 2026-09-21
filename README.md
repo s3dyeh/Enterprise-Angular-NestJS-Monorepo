@@ -1,6 +1,6 @@
-# Enterprise Angular & NestJS Monorepo
+# Enterprise Angular & NestJS Monorepo Boilerplate
 
-**A full-stack TypeScript foundation for enterprise web applications, administration platforms, and internal business tools.**
+**A full-stack Boilerplate TypeScript foundation for enterprise web applications, administration platforms, and internal business tools.**
 
 Build with **Angular 22**, **NestJS 11**, **PostgreSQL**, **TypeORM**, and **Redis** in one coordinated repository. Develop frontend and backend features together, deploy each application independently, and reuse established patterns for authentication, role-based access control, transactional business operations, testing, and observability.
 
