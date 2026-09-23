@@ -106,6 +106,8 @@ export function loadRuntimeConfig() {
     redisCa: process.env.REDIS_TLS_CA || undefined,
     rateLimit: integer('AUTH_RATE_LIMIT', 20, 1, 1000),
     rateWindowSeconds: integer('AUTH_RATE_WINDOW_SECONDS', 60, 1, 3600),
+    apiRateLimit: integer('API_RATE_LIMIT', 120, 0, 100000),
+    apiRateWindowSeconds: integer('API_RATE_WINDOW_SECONDS', 60, 1, 3600),
     trustProxy: process.env.TRUST_PROXY || '',
     metricsToken: process.env.METRICS_TOKEN || '',
     swaggerEnabled: readBoolean('SWAGGER_ENABLED', !production),

@@ -3,10 +3,24 @@
 ## Build artifacts
 
 ```sh
-docker build -t enterprise-api:local apps/api
-docker build -t enterprise-web:local apps/web
+docker build -f apps/api/Dockerfile -t enterprise-api:local .
+docker build -f apps/web/Dockerfile -t enterprise-web:local .
 kubectl kustomize deploy/kubernetes/overlays/production
 ```
+
+Build both images from the **monorepo root** so `@enterprise/contracts` is available to `npm ci`. Do not use `apps/api` or `apps/web` as the Docker build context.
+
+### Local image smoke test (no Kubernetes)
+
+```sh
+docker build -f apps/api/Dockerfile -t enterprise-api:local .
+docker build -f apps/web/Dockerfile -t enterprise-web:local .
+docker compose -f compose.deploy.yaml up -d --wait
+docker compose -f compose.deploy.yaml exec api node dist/database/run-migrations.js
+docker compose -f compose.deploy.yaml exec api node dist/database/seeds/run-seed.js
+```
+
+Open [http://localhost:8080](http://localhost:8080). Default seed admin is `admin@example.com` / `ChangeMeNow12` (override via compose env before first seed). Tear down with `docker compose -f compose.deploy.yaml down -v`.
 
 API and web containers run as nonroot users. Kubernetes sets read-only filesystems, dropped capabilities, seccomp, resource requests/limits, probes, and a small writable /tmp. API file storage must be S3 in production. Web calls /api through Nginx; API is not publicly exposed as a separate Service.
 

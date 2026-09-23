@@ -480,10 +480,12 @@ The integration harness creates and removes a generated test database. Override 
 ### Container builds
 
 ```sh
-docker build -t enterprise-api:local apps/api
-docker build -t enterprise-web:local apps/web
+docker build -f apps/api/Dockerfile -t enterprise-api:local .
+docker build -f apps/web/Dockerfile -t enterprise-web:local .
 kubectl kustomize deploy/kubernetes/overlays/production
 ```
+
+Build from the repository root (required for `libs/contracts`). For a full local container smoke test, see [docs/deployment.md](docs/deployment.md#local-image-smoke-test-no-kubernetes).
 
 The API image runs NestJS on port `3001`. The frontend serves Angular through nonroot Nginx on port `8080`, with SPA fallback, asset caching, security headers, and API proxying. Kustomize renders manifests for inspection; this command does not deploy them.
 

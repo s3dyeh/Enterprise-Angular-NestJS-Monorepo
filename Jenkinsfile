@@ -45,8 +45,8 @@ pipeline {
         sh '''
           set -eu
           mkdir -p .artifacts
-          docker build --pull -t enterprise-api:$RELEASE_SHA apps/api
-          docker build --pull -t enterprise-web:$RELEASE_SHA apps/web
+          docker build --pull -f apps/api/Dockerfile -t enterprise-api:$RELEASE_SHA .
+          docker build --pull -f apps/web/Dockerfile -t enterprise-web:$RELEASE_SHA .
           API_IMAGE=enterprise-api:$RELEASE_SHA node tools/redis-cluster-smoke.mjs
           trivy image --exit-code 1 --severity HIGH,CRITICAL enterprise-api:$RELEASE_SHA
           trivy image --exit-code 1 --severity HIGH,CRITICAL enterprise-web:$RELEASE_SHA

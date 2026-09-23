@@ -13,7 +13,9 @@ import { createHash, timingSafeEqual } from 'node:crypto';
 import { RedisService } from '../platform/redis.service';
 import { RuntimeConfig } from '../platform/runtime.config';
 import { MetricsService } from './metrics.service';
+import { SkipRateLimit } from '../platform/rate-limit.decorator';
 
+@SkipRateLimit()
 @Controller()
 export class HealthController {
   constructor(

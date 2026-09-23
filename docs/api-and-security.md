@@ -36,6 +36,8 @@ Credit adjustments: `POST /admin/account-credits/adjustments`, requiring account
 
 Authentication limits use shared Redis in production and bounded process memory only in local disabled mode. Redis failure rejects protected auth requests. Configure TRUST_PROXY to the actual trusted proxy CIDRs; never trust arbitrary forwarded IP headers. Tune limits for shared NAT traffic and place global abuse controls at the ingress/WAF.
 
+A global API rate limiter (`RateLimitGuard`) applies to all routes except those marked `@SkipRateLimit()` (health/metrics). Defaults are `API_RATE_LIMIT=120` requests per `API_RATE_WINDOW_SECONDS=60`. Set `API_RATE_LIMIT=0` to disable. Responses include `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset`; over-limit requests return `429` with `Retry-After`. Override per route with `@RateLimit({ limit, windowSeconds, bucket })`. Auth endpoints also keep the stricter `AUTH_RATE_*` protection.
+
 Secrets belong in a secret manager or Kubernetes Secrets provisioned outside Git. Four auth signing secrets must be distinct and at least 32 characters in production. Use random entropy, rotate deliberately, and expect old sessions/reset links to expire during rotation.
 
 S3 clients support the AWS default credential chain for workload identity. Static ACCESS_KEY_ID/SECRET_ACCESS_KEY are optional and must be supplied together. Keep buckets private and enforce size/content controls and malware scanning appropriate to your upload policy. Direct presigned uploads require corresponding bucket/CORS policies.

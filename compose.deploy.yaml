@@ -1,0 +1,128 @@
+# Local deployment smoke stack: production-like images against Compose dependencies.
+# Usage (from repo root, after building images):
+#   docker compose -f compose.deploy.yaml up -d --wait
+#   docker compose -f compose.deploy.yaml exec api node dist/database/run-migrations.js
+#   docker compose -f compose.deploy.yaml exec api node dist/database/seeds/run-seed.js
+# Open http://localhost:8080
+name: enterprise-deploy
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: enterprise
+      POSTGRES_PASSWORD: local-development-only
+      POSTGRES_DB: enterprise
+    volumes: ["deploy-postgres:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U enterprise -d enterprise"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "local-development-only"]
+    volumes: ["deploy-redis:/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "REDISCLI_AUTH=local-development-only redis-cli ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  mail:
+    image: maildev/maildev:2.2.1
+    ports: ["127.0.0.1:51080:1080"]
+
+  api:
+    image: enterprise-api:local
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      APP_PORT: "3001"
+      API_PREFIX: api
+      APP_NAME: Enterprise
+      FRONTEND_DOMAIN: http://localhost:8080
+      BACKEND_DOMAIN: http://localhost:8080
+      APP_CORS_ORIGINS: http://localhost:8080
+      DATABASE_TYPE: postgres
+      DATABASE_HOST: postgres
+      DATABASE_PORT: "5432"
+      DATABASE_USERNAME: enterprise
+      DATABASE_PASSWORD: local-development-only
+      DATABASE_NAME: enterprise
+      DATABASE_SYNCHRONIZE: "false"
+      DATABASE_MAX_CONNECTIONS: "10"
+      DATABASE_SSL_ENABLED: "false"
+      FILE_DRIVER: local
+      MAIL_HOST: mail
+      MAIL_PORT: "1025"
+      MAIL_IGNORE_TLS: "true"
+      MAIL_SECURE: "false"
+      MAIL_REQUIRE_TLS: "false"
+      MAIL_DEFAULT_EMAIL: noreply@example.com
+      MAIL_DEFAULT_NAME: Enterprise
+      AUTH_JWT_SECRET: deploy-test-access-secret-change-me
+      AUTH_JWT_TOKEN_EXPIRES_IN: 15m
+      AUTH_REFRESH_SECRET: deploy-test-refresh-secret-change-me
+      AUTH_REFRESH_TOKEN_EXPIRES_IN: 30d
+      AUTH_FORGOT_SECRET: deploy-test-forgot-secret-change-me
+      AUTH_FORGOT_TOKEN_EXPIRES_IN: 30m
+      AUTH_CONFIRM_EMAIL_SECRET: deploy-test-confirm-secret-change-me
+      AUTH_CONFIRM_EMAIL_TOKEN_EXPIRES_IN: 1d
+      AUTH_UNIFORM_ERRORS: "true"
+      AUTH_EMAIL_VERIFICATION_REQUIRED: "false"
+      RECAPTCHA_ENABLED: "false"
+      REDIS_MODE: standalone
+      REDIS_URL: redis://redis:6379
+      REDIS_PASSWORD: local-development-only
+      REDIS_TLS: "false"
+      REDIS_KEY_PREFIX: enterprise-deploy
+      AUTH_RATE_LIMIT: "20"
+      AUTH_RATE_WINDOW_SECONDS: "60"
+      API_RATE_LIMIT: "120"
+      API_RATE_WINDOW_SECONDS: "60"
+      SWAGGER_ENABLED: "true"
+      LOG_LEVEL: info
+      OTEL_ENABLED: "false"
+      ENABLE_BUSINESS_EXAMPLES: "false"
+      SEED_ADMIN_EMAIL: admin@example.com
+      SEED_ADMIN_PASSWORD: ChangeMeNow12
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3001/health/live').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 20s
+
+  web:
+    image: enterprise-web:local
+    depends_on:
+      api:
+        condition: service_healthy
+    ports: ["127.0.0.1:8080:8080"]
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "-qO-",
+          "http://127.0.0.1:8080/health/live",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  deploy-postgres:
+  deploy-redis:

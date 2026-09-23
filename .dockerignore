@@ -1,0 +1,20 @@
+# Keep Docker build contexts small when building from the monorepo root.
+.git
+.artifacts
+.verification
+**/node_modules
+**/dist
+**/.angular
+**/coverage
+**/test-results
+**/playwright-report
+**/.env
+**/.env.*
+!**/.env.example
+apps/api/files
+apps/api/test
+docs
+deploy
+tools
+**/*.md
+**/tsconfig.tsbuildinfo

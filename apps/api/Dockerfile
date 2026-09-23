@@ -1,25 +1,37 @@
+# Build from the monorepo root:
+#   docker build -f apps/api/Dockerfile -t enterprise-api:local .
+FROM node:24.15.0-alpine AS contracts
+WORKDIR /workspace/libs/contracts
+COPY libs/contracts/package*.json ./
+RUN npm ci
+COPY libs/contracts/ ./
+RUN npm run build
+
 FROM node:24.15.0-alpine AS dependencies
-WORKDIR /app
-COPY package*.json ./
+WORKDIR /workspace/apps/api
+COPY apps/api/package*.json ./
+COPY --from=contracts /workspace/libs/contracts /workspace/libs/contracts
 RUN npm ci
 
 FROM dependencies AS build
-COPY nest-cli.json tsconfig*.json ./
-COPY src ./src
+COPY apps/api/nest-cli.json apps/api/tsconfig*.json ./
+COPY apps/api/src ./src
 RUN npm run build
 
 FROM node:24.15.0-alpine AS production-dependencies
-WORKDIR /app
-COPY package*.json ./
+WORKDIR /workspace/apps/api
+COPY apps/api/package*.json ./
+COPY --from=contracts /workspace/libs/contracts /workspace/libs/contracts
 RUN npm ci --omit=dev --no-audit --no-fund
 
 FROM node:24.15.0-alpine AS runtime
 ENV NODE_ENV=production
-WORKDIR /app
-COPY --from=production-dependencies --chown=node:node /app/node_modules ./node_modules
-COPY --from=build --chown=node:node /app/dist ./dist
-COPY --from=build --chown=node:node /app/package.json ./package.json
+# Preserve the file:../../libs/contracts layout used by package.json / npm links.
+WORKDIR /workspace/apps/api
+COPY --from=production-dependencies --chown=node:node /workspace/apps/api/node_modules ./node_modules
+COPY --from=build --chown=node:node /workspace/apps/api/dist ./dist
+COPY --from=build --chown=node:node /workspace/apps/api/package.json ./package.json
+COPY --from=contracts --chown=node:node /workspace/libs/contracts /workspace/libs/contracts
 USER node
 EXPOSE 3001
 CMD ["node", "dist/main.js"]
-

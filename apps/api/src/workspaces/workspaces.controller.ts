@@ -35,6 +35,7 @@ import {
   InvitationTokenResponseDto,
   AcceptedInvitationResponseDto,
 } from './workspace-response.dto';
+import { RateLimit } from '../platform/rate-limit.decorator';
 
 type SessionRequest = RequestWithUser<JwtPayloadType>;
 @ApiTags('Workspaces')
@@ -49,11 +50,13 @@ export class WorkspacesController {
     return this.workspaces.list(Number(req.user.id));
   }
   @Post()
+  @RateLimit({ limit: 20, windowSeconds: 3600, bucket: 'workspace-create' })
   @ApiCreatedResponse({ type: WorkspaceResponseDto })
   create(@Req() req: SessionRequest, @Body() body: WorkspaceDto) {
     return this.workspaces.create(Number(req.user.id), body.name);
   }
   @Post('accept-invitation')
+  @RateLimit({ limit: 30, windowSeconds: 3600, bucket: 'workspace-accept' })
   @ApiCreatedResponse({ type: AcceptedInvitationResponseDto })
   accept(@Req() req: SessionRequest, @Body() body: AcceptInvitationDto) {
     return this.workspaces.accept(Number(req.user.id), body.token);
@@ -74,6 +77,7 @@ export class WorkspacesController {
     return this.workspaces.rename(id, Number(req.user.id), body.name);
   }
   @Post(':id/invitations')
+  @RateLimit({ limit: 30, windowSeconds: 3600, bucket: 'workspace-invite' })
   @ApiCreatedResponse({ type: InvitationTokenResponseDto })
   invite(
     @Param('id', ParseUUIDPipe) id: string,
